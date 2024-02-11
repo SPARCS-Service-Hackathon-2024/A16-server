@@ -9,3 +9,18 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum AuthProvider {
+  EMAIL
+  KAKAO
+}
+
+model User {
+  id        String       @id @default(uuid())
+  nickname  String       @unique
+  provider  AuthProvider
+  email     String       @unique
+  password  String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
