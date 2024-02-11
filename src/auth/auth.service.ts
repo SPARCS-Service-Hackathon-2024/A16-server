@@ -11,6 +11,12 @@ export class AuthService {
     }
   }
 
+  async checkNickname(email: string): Promise<void> {
+    if (await this.authRepository.checkNickname(email)) {
+      throw new ConflictException('Nickname already exists');
+    }
+  }
+
   async registerByEmail() {
     return 'registerByEmail';
   }

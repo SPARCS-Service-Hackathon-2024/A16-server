@@ -9,4 +9,11 @@ export class AuthRepository {
     const user = await this.prismaService.user.findUnique({ where: { email } });
     return !!user;
   }
+
+  async checkNickname(nickname: string): Promise<boolean> {
+    const user = await this.prismaService.user.findUnique({
+      where: { nickname },
+    });
+    return !!user;
+  }
 }
