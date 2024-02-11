@@ -10,7 +10,7 @@ export class AuthController {
 
   @ApiOperation({ summary: 'check email duplication' })
   @ApiResponse({ status: 200, description: 'OK' })
-  @ApiResponse({ status: 409, description: 'Conflict' })
+  @ApiResponse({ status: 409, description: 'Conflict - email already exists' })
   @Post('check/email')
   checkEmail(@Body() body: EmailCheckDto): Promise<void> {
     return this.authService.checkEmail(body.email);
