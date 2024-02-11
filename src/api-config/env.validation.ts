@@ -22,8 +22,9 @@ class EnvironmentVariables {
 
   @IsString()
   KAKAO_API_KEY: string;
+
   @IsString()
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   KAKAO_REDIRECT_URL: string;
 }
 

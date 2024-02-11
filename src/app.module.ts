@@ -2,12 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { ConfigModule } from '@nestjs/config';
-import { validate } from './env.validation';
 import { ApiConfigService } from './api-config/api-config.service';
+import { ApiConfigModule } from './api-config/api-config.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, validate }), UserModule],
+  imports: [UserModule, ApiConfigModule],
   controllers: [AppController],
   providers: [AppService, ApiConfigService],
 })
