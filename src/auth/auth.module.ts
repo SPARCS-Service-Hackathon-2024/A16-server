@@ -1,11 +1,13 @@
-import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { AuthRepository } from './auth.repository';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { ApiConfigService } from 'src/api-config/api-config.service';
 import { CacheModule } from '@nestjs/cache-manager';
+import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { ApiConfigService } from 'src/api-config/api-config.service';
+import { AuthController } from './auth.controller';
+import { AuthGuard } from './auth.guard';
+import { AuthRepository } from './auth.repository';
+import { AuthService } from './auth.service';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -25,6 +27,13 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthRepository],
+  providers: [
+    AuthService,
+    AuthRepository,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AuthModule {}

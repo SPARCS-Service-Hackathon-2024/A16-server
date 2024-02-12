@@ -8,9 +8,11 @@ import { EmailVerificationDto } from './dto/email-verification.dto';
 import { EmailRegisterDto } from './dto/email-register.dto';
 import { EmailLoginDto } from './dto/email-login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { Public } from './auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
+@Public()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

@@ -58,7 +58,13 @@ export class AuthRepository {
   async findUserById(id: string) {
     const user = await this.prismaService.user.findUnique({
       where: { id },
-      select: { password: false },
+      select: {
+        id: true,
+        email: true,
+        nickname: true,
+        provider: true,
+        createdAt: true,
+      },
     });
     return user;
   }
