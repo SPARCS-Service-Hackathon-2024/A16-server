@@ -6,9 +6,16 @@ import { ApiConfigService } from './api-config/api-config.service';
 import { ApiConfigModule } from './api-config/api-config.module';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
-  imports: [UserModule, ApiConfigModule, AuthModule, PrismaModule],
+  imports: [
+    UserModule,
+    ApiConfigModule,
+    AuthModule,
+    PrismaModule,
+    NotificationModule,
+  ],
   controllers: [AppController],
   providers: [AppService, ApiConfigService],
 })
