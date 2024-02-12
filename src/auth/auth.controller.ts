@@ -6,6 +6,8 @@ import { NicknameCheckDto } from './dto/nickname-check.dto';
 import { EmailVerifyDto } from './dto/email-verify.dto';
 import { EmailVerificationDto } from './dto/email-verification.dto';
 import { EmailRegisterDto } from './dto/email-register.dto';
+import { EmailLoginDto } from './dto/email-login.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -69,9 +71,19 @@ export class AuthController {
     return 'Hello World!';
   }
 
+  @ApiOperation({ summary: 'login by email' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'login succeed',
+    type: LoginResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'wrong email or password',
+  })
   @Post('email/login')
-  getHello3(): string {
-    return 'Hello World!';
+  loginByEmail(@Body() body: EmailLoginDto) {
+    return this.authService.loginByEmail(body);
   }
 
   @Post('kakao/login')

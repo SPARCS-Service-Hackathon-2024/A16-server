@@ -30,6 +30,9 @@ class EnvironmentVariables {
 
   @IsString()
   MAILER_TRANSPORT: string;
+
+  @IsString()
+  JWT_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {

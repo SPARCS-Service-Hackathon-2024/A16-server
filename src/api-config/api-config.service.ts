@@ -25,4 +25,8 @@ export class ApiConfigService {
   get mailerTransport(): string {
     return this.configService.get<string>('MAILER_TRANSPORT')!;
   }
+
+  get jwtSecret(): string {
+    return this.configService.get<string>('JWT_SECRET')!;
+  }
 }

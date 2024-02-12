@@ -38,4 +38,20 @@ export class AuthRepository {
     });
     return user;
   }
+
+  async findUserByEmailAndPassword({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) {
+    const user = await this.prismaService.user.findUnique({
+      where: { email, provider: 'EMAIL' },
+    });
+    if (!user) return null;
+    const result = await bcrypt.compare(password, user.password);
+    if (!result) return null;
+    return user;
+  }
 }

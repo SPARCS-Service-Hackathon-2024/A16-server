@@ -3,6 +3,7 @@ import {
   ConflictException,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { AuthRepository } from './auth.repository';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -12,6 +13,9 @@ import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
 import { EmailVerificationDto } from './dto/email-verification.dto';
 import { EmailRegisterDto } from './dto/email-register.dto';
+import { EmailLoginDto } from './dto/email-login.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
+import { ApiConfigService } from 'src/api-config/api-config.service';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +27,7 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
     private readonly mailerService: MailerService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private readonly configService: ApiConfigService,
   ) {}
 
   async checkEmail(email: string): Promise<void> {
@@ -76,5 +81,12 @@ export class AuthService {
     await this.checkNickname(body.nickname);
     this.verifyEmailVerificationToken(body.email, body.emailVerificationToken);
     await this.authRepository.createUserByEmail(body);
+  }
+
+  async loginByEmail(body: EmailLoginDto): Promise<LoginResponseDto> {
+    const user = await this.authRepository.findUserByEmailAndPassword(body);
+    if (!user) throw new NotFoundException();
+    const token = jwt.sign({ id: user.id }, this.configService.jwtSecret);
+    return { accessToken: token };
   }
 }
