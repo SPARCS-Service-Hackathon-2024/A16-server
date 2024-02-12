@@ -10,7 +10,7 @@ import { NotificationListResponseDto } from './dto/notification-list-response.dt
 
 @ApiTags('notification')
 @ApiBearerAuth()
-@Controller('notification')
+@Controller('notifications')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
