@@ -1,3 +1,5 @@
+import { MailerService } from '@nestjs-modules/mailer';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
   ConflictException,
@@ -5,17 +7,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AuthRepository } from './auth.repository';
-import { MailerService } from '@nestjs-modules/mailer';
+import { JwtService } from '@nestjs/jwt';
 import { Cache } from 'cache-manager';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import * as crypto from 'crypto';
-import * as jwt from 'jsonwebtoken';
-import { EmailVerificationDto } from './dto/email-verification.dto';
-import { EmailRegisterDto } from './dto/email-register.dto';
+import { AuthRepository } from './auth.repository';
 import { EmailLoginDto } from './dto/email-login.dto';
+import { EmailRegisterDto } from './dto/email-register.dto';
+import { EmailVerificationDto } from './dto/email-verification.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
-import { ApiConfigService } from 'src/api-config/api-config.service';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +26,7 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
     private readonly mailerService: MailerService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
-    private readonly configService: ApiConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async checkEmail(email: string): Promise<void> {
@@ -54,14 +53,17 @@ export class AuthService {
 
   private generateEmailVerificationToken(email: string): string {
     const payload = { email };
-    const token = jwt.sign(payload, this.verificationSecretKey, {
+    const token = this.jwtService.sign(payload, {
+      secret: this.verificationSecretKey,
       expiresIn: '1h',
     });
     return token;
   }
 
   private verifyEmailVerificationToken(email: string, token: string): void {
-    const payload = jwt.verify(token, this.verificationSecretKey);
+    const payload = this.jwtService.verify(token, {
+      secret: this.verificationSecretKey,
+    });
     if (typeof payload !== 'object') throw new BadRequestException();
     if (payload.email !== email) throw new BadRequestException();
   }
@@ -86,7 +88,7 @@ export class AuthService {
   async loginByEmail(body: EmailLoginDto): Promise<LoginResponseDto> {
     const user = await this.authRepository.findUserByEmailAndPassword(body);
     if (!user) throw new NotFoundException();
-    const token = jwt.sign({ id: user.id }, this.configService.jwtSecret);
+    const token = await this.jwtService.signAsync({ id: user.id });
     return { accessToken: token };
   }
 }
