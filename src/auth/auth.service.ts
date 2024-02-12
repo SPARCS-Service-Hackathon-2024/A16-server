@@ -1,4 +1,9 @@
-import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { AuthRepository } from './auth.repository';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Cache } from 'cache-manager';
@@ -6,6 +11,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
 import { EmailVerificationDto } from './dto/email-verification.dto';
+import { EmailRegisterDto } from './dto/email-register.dto';
 
 @Injectable()
 export class AuthService {
@@ -41,20 +47,34 @@ export class AuthService {
     });
   }
 
+  private generateEmailVerificationToken(email: string): string {
+    const payload = { email };
+    const token = jwt.sign(payload, this.verificationSecretKey, {
+      expiresIn: '1h',
+    });
+    return token;
+  }
+
+  private verifyEmailVerificationToken(email: string, token: string): void {
+    const payload = jwt.verify(token, this.verificationSecretKey);
+    if (typeof payload !== 'object') throw new BadRequestException();
+    if (payload.email !== email) throw new BadRequestException();
+  }
+
   async verifyEmail(email: string, code: string) {
     const cachedCode = await this.cacheManager.get<string>(email);
     if (cachedCode !== code) {
       throw new ConflictException('Invalid verification code');
     }
     await this.cacheManager.del(email);
-    const payload = { email };
-    const token = jwt.sign(payload, this.verificationSecretKey, {
-      expiresIn: '1h',
-    });
+    const token = this.generateEmailVerificationToken(email);
     return new EmailVerificationDto(token);
   }
 
-  async registerByEmail() {
-    return 'registerByEmail';
+  async registerByEmail(body: EmailRegisterDto) {
+    await this.checkEmail(body.email);
+    await this.checkNickname(body.nickname);
+    this.verifyEmailVerificationToken(body.email, body.emailVerificationToken);
+    await this.authRepository.createUserByEmail(body);
   }
 }

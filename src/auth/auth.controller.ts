@@ -5,6 +5,7 @@ import { EmailCheckDto } from './dto/email-check.dto';
 import { NicknameCheckDto } from './dto/nickname-check.dto';
 import { EmailVerifyDto } from './dto/email-verify.dto';
 import { EmailVerificationDto } from './dto/email-verification.dto';
+import { EmailRegisterDto } from './dto/email-register.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -12,8 +13,11 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ summary: 'check email duplication' })
-  @ApiResponse({ status: 200, description: 'OK' })
-  @ApiResponse({ status: 409, description: 'Conflict - email already exists' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'OK' })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'Conflict - email already exists',
+  })
   @HttpCode(HttpStatus.OK)
   @Post('check/email')
   checkEmail(@Body() body: EmailCheckDto): Promise<void> {
@@ -21,9 +25,9 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'check nickname duplication' })
-  @ApiResponse({ status: 200, description: 'OK' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'OK' })
   @ApiResponse({
-    status: 409,
+    status: HttpStatus.CONFLICT,
     description: 'Conflict - nickname already exists',
   })
   @HttpCode(HttpStatus.OK)
@@ -46,14 +50,18 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'register by email' })
-  @ApiResponse({ status: 201, description: 'Created' })
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'Created' })
   @ApiResponse({
-    status: 409,
+    status: HttpStatus.CONFLICT,
     description: 'Conflict - email or nickname already exists',
   })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Wrong email verification token',
+  })
   @Post('email/register')
-  getHello() {
-    return this.authService.registerByEmail();
+  registerByEmail(@Body() body: EmailRegisterDto) {
+    return this.authService.registerByEmail(body);
   }
 
   @Post('kakao/register')
