@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import "./tailwind.css";
 import Splash from './pages/Splash';
 import Login from './pages/Login';
+import JoinWay from './pages/JoinWay';
+import Join from './pages/Join';
 
 const App: React.FC = () => {
 
@@ -11,6 +13,8 @@ const App: React.FC = () => {
       <Routes>
         <Route path='/' element={<Splash />}/>
         <Route path='/Login' element={<Login/>}/>
+        <Route path='/JoinWay' element={<JoinWay/>}/>
+        <Route path='/Join' element={<Join/>}/>
       </Routes>
     </BrowserRouter>
   );

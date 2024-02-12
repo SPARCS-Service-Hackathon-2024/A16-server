@@ -3,7 +3,7 @@ import Btn from './component/Btn';
 import Input from './component/Input';
 import LinkText from './component/LinkText';
 
-export default function Login() {
+export default function Join() {
     return (
         <div className='mx-[10%] pt-[30%]'>
             <h3 className='text-3xl leading-[100px] text-center font-bold'>로그인</h3>
