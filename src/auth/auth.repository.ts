@@ -54,4 +54,9 @@ export class AuthRepository {
     if (!result) return null;
     return user;
   }
+
+  async findUserById(id: string) {
+    const user = await this.prismaService.user.findUnique({ where: { id } });
+    return user;
+  }
 }
