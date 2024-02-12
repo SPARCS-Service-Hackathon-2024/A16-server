@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { AuthRepository } from './auth.repository';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ApiConfigService } from 'src/api-config/api-config.service';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ApiConfigService } from 'src/api-config/api-config.service';
         transport: configService.mailerTransport,
       }),
     }),
+    CacheModule.register(),
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthRepository],

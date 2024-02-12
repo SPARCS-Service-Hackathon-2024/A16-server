@@ -3,6 +3,8 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { EmailCheckDto } from './dto/email-check.dto';
 import { NicknameCheckDto } from './dto/nickname-check.dto';
+import { EmailVerifyDto } from './dto/email-verify.dto';
+import { EmailVerificationDto } from './dto/email-verification.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -30,11 +32,17 @@ export class AuthController {
     return this.authService.checkNickname(body.nickname);
   }
 
+  @ApiOperation({ summary: 'send email verification code' })
+  @Post('email/code')
+  verifyEmail(@Body() body: EmailCheckDto): Promise<void> {
+    return this.authService.sendEmailVerificationCode(body.email);
+  }
+
   @ApiOperation({ summary: 'verify email' })
   @HttpCode(HttpStatus.OK)
-  @Post('verify/email')
-  verifyEmail(@Body() body: EmailCheckDto): Promise<void> {
-    return this.authService.verifyEmail(body.email);
+  @Post('email/verify')
+  verifyEmailCode(@Body() body: EmailVerifyDto): Promise<EmailVerificationDto> {
+    return this.authService.verifyEmail(body.email, body.code);
   }
 
   @ApiOperation({ summary: 'register by email' })
@@ -43,22 +51,22 @@ export class AuthController {
     status: 409,
     description: 'Conflict - email or nickname already exists',
   })
-  @Post('register/email')
+  @Post('email/register')
   getHello() {
     return this.authService.registerByEmail();
   }
 
-  @Post('register/kakao')
+  @Post('kakao/register')
   getHello2(): string {
     return 'Hello World!';
   }
 
-  @Post('login/email')
+  @Post('email/login')
   getHello3(): string {
     return 'Hello World!';
   }
 
-  @Post('login/kakao')
+  @Post('kakao/login')
   getHello4(): string {
     return 'Hello World!';
   }
