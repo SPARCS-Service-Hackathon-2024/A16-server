@@ -6,7 +6,8 @@ import {
   IsUrl,
   validateSync,
 } from 'class-validator';
-enum Environment {
+
+export enum Environment {
   Development = 'development',
   Production = 'production',
   Test = 'test',
@@ -26,6 +27,9 @@ class EnvironmentVariables {
   @IsString()
   @IsUrl({ require_tld: false })
   KAKAO_REDIRECT_URL: string;
+
+  @IsString()
+  MAILER_TRANSPORT: string;
 }
 
 export function validate(config: Record<string, unknown>) {

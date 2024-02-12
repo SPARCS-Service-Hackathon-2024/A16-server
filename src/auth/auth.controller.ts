@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { EmailCheckDto } from './dto/email-check.dto';
@@ -12,6 +12,7 @@ export class AuthController {
   @ApiOperation({ summary: 'check email duplication' })
   @ApiResponse({ status: 200, description: 'OK' })
   @ApiResponse({ status: 409, description: 'Conflict - email already exists' })
+  @HttpCode(HttpStatus.OK)
   @Post('check/email')
   checkEmail(@Body() body: EmailCheckDto): Promise<void> {
     return this.authService.checkEmail(body.email);
@@ -23,13 +24,27 @@ export class AuthController {
     status: 409,
     description: 'Conflict - nickname already exists',
   })
+  @HttpCode(HttpStatus.OK)
   @Post('check/nickname')
   checkNickname(@Body() body: NicknameCheckDto): Promise<void> {
     return this.authService.checkNickname(body.nickname);
   }
 
+  @ApiOperation({ summary: 'verify email' })
+  @HttpCode(HttpStatus.OK)
+  @Post('verify/email')
+  verifyEmail(@Body() body: EmailCheckDto): Promise<void> {
+    return this.authService.verifyEmail(body.email);
+  }
+
+  @ApiOperation({ summary: 'register by email' })
+  @ApiResponse({ status: 201, description: 'Created' })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - email or nickname already exists',
+  })
   @Post('register/email')
-  getHello(): Promise<string> {
+  getHello() {
     return this.authService.registerByEmail();
   }
 
