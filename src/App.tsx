@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import JoinWay from './pages/JoinWay';
 import Join from './pages/Join';
 import Home from './pages/Home';
+import Alarm from './pages/Alarm';
 
 const App: React.FC = () => {
 
@@ -17,6 +18,7 @@ const App: React.FC = () => {
         <Route path='/JoinWay' element={<JoinWay/>}/>
         <Route path='/Join' element={<Join/>}/>
         <Route path='/Home' element={<Home/>}/>
+        <Route path='/Alarm' element={<Alarm/>}/>
       </Routes>
     </BrowserRouter>
   );
