@@ -1,4 +1,4 @@
-import { Controller, Get, HttpStatus } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -7,6 +7,9 @@ import {
 } from '@nestjs/swagger';
 import { NotificationService } from './notification.service';
 import { NotificationListResponseDto } from './dto/notification-list-response.dto';
+import { NotificationListQuery } from './dto/notification-list-query';
+import { GetUser } from 'src/user/get-user.decoration';
+import { User } from '@prisma/client';
 
 @ApiTags('notification')
 @ApiBearerAuth()
@@ -17,5 +20,10 @@ export class NotificationController {
   @ApiOperation({ summary: 'get notifications' })
   @ApiResponse({ status: HttpStatus.OK, type: NotificationListResponseDto })
   @Get()
-  getNotifications() {}
+  getNotifications(
+    @GetUser() user: User,
+    @Query() query: NotificationListQuery,
+  ) {
+    return this.notificationService.getNotifications(user, query);
+  }
 }
