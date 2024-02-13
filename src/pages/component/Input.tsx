@@ -14,7 +14,6 @@ type InputProps = {
 const Input: React.FC<InputProps> = ({ type, text, label, className, action, errorMsg, conditionMsg, condition}) => {
     const [value, setValue] = useState<string>('');
     const [typeInput, setTypeInput] = useState<string>(type);
-    const [show, setShow] = useState<boolean>(false);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
@@ -26,7 +25,7 @@ const Input: React.FC<InputProps> = ({ type, text, label, className, action, err
     }
 
     return (
-        <div className="w-[100%] h-[48px] flex justify-between mb-[8px] pl-3 leading-[48px] rounded-lg border border-[#E5E5E5] bg-[#F7F8F9]">
+        <div className={`${className} w-[100%] h-[48px] flex justify-between mb-[8px] pl-3 leading-[48px] rounded-lg border border-[#E5E5E5] bg-[#F7F8F9]`}>
             <input
                 type={typeInput}
                 value={value}
