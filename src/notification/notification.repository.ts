@@ -32,4 +32,18 @@ export class NotificationRepository {
       })
       .then((n) => plainToInstance(NotificationEntity, n));
   }
+
+  async markAllAsRead(user: User) {
+    return await this.prismaService.notification.updateMany({
+      where: { userId: user.id },
+      data: { isRead: true },
+    });
+  }
+
+  async markAsRead(user: User, id: string) {
+    return await this.prismaService.notification.update({
+      where: { id },
+      data: { isRead: true },
+    });
+  }
 }

@@ -21,4 +21,12 @@ export class NotificationService {
     const count = await this.notificationRepository.getAmountByUser(user);
     return { list: notifications, count };
   }
+
+  async markAllAsRead(user: User) {
+    await this.notificationRepository.markAllAsRead(user);
+  }
+
+  async markAsRead(user: User, id: string) {
+    await this.notificationRepository.markAsRead(user, id);
+  }
 }
