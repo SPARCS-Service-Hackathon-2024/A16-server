@@ -5,6 +5,7 @@ import Splash from './pages/Splash';
 import Login from './pages/Login';
 import JoinWay from './pages/JoinWay';
 import Join from './pages/Join';
+import Home from './pages/Home';
 
 const App: React.FC = () => {
 
@@ -15,6 +16,7 @@ const App: React.FC = () => {
         <Route path='/Login' element={<Login/>}/>
         <Route path='/JoinWay' element={<JoinWay/>}/>
         <Route path='/Join' element={<Join/>}/>
+        <Route path='/Home' element={<Home/>}/>
       </Routes>
     </BrowserRouter>
   );

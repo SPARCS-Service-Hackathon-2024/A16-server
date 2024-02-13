@@ -7,10 +7,11 @@ type HeaderProps = {
     alarm: boolean;
     review: boolean;
     search: boolean;
+    setting: boolean;
     className?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ text, back, alarm, review, search, className}) => {
+const Header: React.FC<HeaderProps> = ({ text, back, alarm, review, search, className, setting}) => {
     let navigate = useNavigate();
 
     const toBackClick = () => {
@@ -25,9 +26,10 @@ const Header: React.FC<HeaderProps> = ({ text, back, alarm, review, search, clas
             <div className="flex justify-center">
                 {text ? <p>{text}</p> : <Link to={"/"} onClick={toBackClick} className='bg-transparent outline-none h-[48px] flex justify-end'><img src="/assets/logo.png" alt="back" className="object-cover w-auto h-full" /></Link>}
             </div>
-            <div className='flex w-[100px]'>
+            <div className='flex w-[100px] justify-end'>
                 {alarm && <Link to={"/"} onClick={toBackClick} className='bg-transparent outline-none h-[24px] w-[48px] flex justify-end'><img src="/assets/alarm.png" alt="back" className="object-cover w-auto h-full" /></Link>}
                 {review && <Link to={"/"} onClick={toBackClick} className='bg-transparent outline-none h-[24px] w-[48px] flex justify-end'><img src="/assets/review.png" alt="back" className="object-cover w-auto h-full" /></Link>}
+                {setting && <Link to={"/"} onClick={toBackClick} className='bg-transparent outline-none h-[24px] w-[48px] flex justify-end'><img src="/assets/setting.png" alt="back" className="object-cover w-auto h-full" /></Link>}
             </div>
         </div>
     );
