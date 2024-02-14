@@ -16,7 +16,7 @@ enum AuthProvider {
 }
 
 model User {
-  id            String         @id @default(uuid())
+  id            String         @id @default(uuid()) @db.Uuid
   nickname      String         @unique
   provider      AuthProvider
   email         String         @unique
@@ -36,43 +36,43 @@ enum NotificationType {
 }
 
 model Notification {
-  id        String           @id @default(uuid())
-  actorId   String
-  objectId  String
+  id        String           @id @default(uuid()) @db.Uuid
+  actorId   String           @db.Uuid
+  objectId  String           @db.Uuid
   type      NotificationType
   isRead    Boolean          @default(false)
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
   user      User             @relation(fields: [userId], references: [id])
-  userId    String
+  userId    String           @db.Uuid
 }
 
 model Review {
-  id        String       @id @default(uuid())
+  id        String       @id @default(uuid()) @db.Uuid
   files     ReviewFile[]
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   deletedAt DateTime?
   user      User         @relation(fields: [userId], references: [id])
-  userId    String
+  userId    String       @db.Uuid
   stars     Int
   content   String       @db.VarChar(1000)
 
   withs   ReviewWith[]
   tags    ReviewTag[]
   place   Place        @relation(fields: [placeId], references: [id])
-  placeId String
+  placeId String       @db.Uuid
 }
 
 model ReviewFile {
-  id       String @id @default(uuid())
+  id       String @id @default(uuid()) @db.Uuid
   url      String
   review   Review @relation(fields: [reviewId], references: [id])
-  reviewId String
+  reviewId String @db.Uuid
 }
 
 model ReviewWith {
-  reviewId String
+  reviewId String @db.Uuid
   with     String
   review   Review @relation(fields: [reviewId], references: [id])
 
@@ -82,13 +82,13 @@ model ReviewWith {
 model ReviewTag {
   tag      String
   review   Review @relation(fields: [reviewId], references: [id])
-  reviewId String
+  reviewId String @db.Uuid
 
   @@id([tag, reviewId])
 }
 
 model Place {
-  id      String   @id @default(uuid())
+  id      String   @id @default(uuid()) @db.Uuid
   address String
   name    String
   lat     Float
@@ -97,11 +97,11 @@ model Place {
 }
 
 model Following {
-  id          String @id @default(uuid())
+  id          String @id @default(uuid()) @db.Uuid
   following   User   @relation(fields: [followingId], references: [id], name: "Following")
-  followingId String
+  followingId String @db.Uuid
   User        User   @relation(fields: [userId], references: [id], name: "User")
-  userId      String
+  userId      String @db.Uuid
 
   @@unique([followingId, userId])
 }
