@@ -50,17 +50,20 @@ export class UserRepository {
     });
   }
 
-  async addBio(user: User, bio: string) {
+  async updateUser(
+    user: User,
+    { bio, tags, nickname }: { bio: string; tags: string[]; nickname: string },
+  ) {
     await this.prismaService.user.update({
       where: { id: user.id },
-      data: { bio },
-    });
-  }
-
-  async removeBio(user: User) {
-    await this.prismaService.user.update({
-      where: { id: user.id },
-      data: { bio: null },
+      data: {
+        bio,
+        nickname,
+        tags: {
+          deleteMany: { userId: user.id },
+          createMany: { data: tags.map((name) => ({ name })) },
+        },
+      },
     });
   }
 }

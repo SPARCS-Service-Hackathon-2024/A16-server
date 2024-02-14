@@ -13,6 +13,7 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { ApiConfigService } from 'src/api-config/api-config.service';
 import { UserResponseDto } from './dto/user-response.dto';
 import { UserRepository } from './user.repository';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -74,13 +75,8 @@ export class UserService {
     return this.getUserInfoById(user, targetId);
   }
 
-  async addBio(user: User, bio: string) {
-    await this.userRepository.addBio(user, bio);
-    return this.getUserInfo(user);
-  }
-
-  async deleteBio(user: User) {
-    await this.userRepository.removeBio(user);
+  async updateUser(user: User, body: UpdateUserDto) {
+    await this.userRepository.updateUser(user, body);
     return this.getUserInfo(user);
   }
 }
