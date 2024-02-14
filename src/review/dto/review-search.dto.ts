@@ -12,8 +12,17 @@ enum Region {
 }
 
 export class ReviewSearchDto {
-  @ApiProperty({ enum: Region, enumName: 'Region' })
-  readonly region: Region;
+  @ApiProperty({
+    enum: Region,
+    enumName: 'Region',
+    // @ts-expect-error explode is not a valid property
+    explode: false,
+    isArray: true,
+  })
+  @Type(() => String)
+  @Transform(({ value }) => [...new Set(value.split(','))])
+  @IsArray()
+  readonly region: Region[];
 
   @ApiProperty({ required: false, enum: With, enumName: 'With' })
   readonly with?: With;
