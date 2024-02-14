@@ -16,15 +16,17 @@ enum AuthProvider {
 }
 
 model User {
-  id           String         @id @default(uuid())
-  nickname     String         @unique
-  provider     AuthProvider
-  email        String         @unique
-  password     String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  Notification Notification[]
-  Review       Review[]
+  id            String         @id @default(uuid())
+  nickname      String         @unique
+  provider      AuthProvider
+  email         String         @unique
+  password      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  notifications Notification[]
+  reviews       Review[]
+  followings    Following[]    @relation("User")
+  followers     Following[]    @relation("Following")
 }
 
 enum NotificationType {
@@ -46,20 +48,20 @@ model Notification {
 }
 
 model Review {
-  id         String       @id @default(uuid())
-  ReviewFile ReviewFile[]
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  deletedAt  DateTime?
-  user       User         @relation(fields: [userId], references: [id])
-  userId     String
-  stars      Int
-  content    String       @db.VarChar(1000)
+  id        String       @id @default(uuid())
+  files     ReviewFile[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  deletedAt DateTime?
+  user      User         @relation(fields: [userId], references: [id])
+  userId    String
+  stars     Int
+  content   String       @db.VarChar(1000)
 
-  ReviewWith ReviewWith[]
-  ReviewTag  ReviewTag[]
-  Place      Place        @relation(fields: [placeId], references: [id])
-  placeId    String
+  withs   ReviewWith[]
+  tags    ReviewTag[]
+  place   Place        @relation(fields: [placeId], references: [id])
+  placeId String
 }
 
 model ReviewFile {
@@ -91,5 +93,13 @@ model Place {
   name    String
   lat     Float
   lng     Float
-  Review  Review[]
+  reviews Review[]
+}
+
+model Following {
+  id          String @id @default(uuid())
+  following   User   @relation(fields: [followingId], references: [id], name: "Following")
+  followingId String
+  User        User   @relation(fields: [userId], references: [id], name: "User")
+  userId      String
 }
