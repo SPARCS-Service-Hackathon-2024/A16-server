@@ -16,7 +16,7 @@ export class UserRepository {
         bio: true,
         followers: true,
         followings: true,
-        reviews: { include: { tags: true } },
+        tags: true,
       },
     });
     return user;

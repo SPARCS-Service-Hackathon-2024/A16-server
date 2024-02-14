@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Prisma } from '@prisma/client';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { FollowingDto } from './following.dto';
+import { UserTagDto } from './user-tag.dto';
 
 export class UserResponseDto {
   @ApiProperty()
@@ -21,23 +21,12 @@ export class UserResponseDto {
   readonly bio?: string;
 
   @ApiProperty()
-  @Transform(({ obj }) => {
-    const reviews = obj.reviews as Prisma.ReviewGetPayload<{
-      include: { tags: true };
-    }>[];
-    const tagCounts = reviews
-      .flatMap((review) => review.tags.map((tag) => tag.name))
-      .reduce(
-        (acc, tag) => ({ ...acc, [tag]: (acc[tag] || 0) + 1 }),
-        {} as Record<string, number>,
-      );
-    const tags = Object.entries(tagCounts)
-      .sort(([, a], [, b]) => b - a)
-      .map(([tag]) => tag);
-    return tags.slice(0, 3);
+  @Type(() => UserTagDto)
+  @Transform(({ value }) => value.map((tag: UserTagDto) => tag.name), {
+    toPlainOnly: true,
   })
   @Expose()
-  readonly tags: string[];
+  readonly tags: UserTagDto[];
 
   @Exclude()
   readonly createdAt: Date;

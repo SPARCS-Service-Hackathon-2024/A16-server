@@ -28,6 +28,7 @@ model User {
   reviews       Review[]
   followings    Following[]    @relation("User")
   followers     Following[]    @relation("Following")
+  tags          UserTag[]
 }
 
 enum NotificationType {
@@ -105,4 +106,12 @@ model Following {
   userId      String @db.Uuid
 
   @@unique([followingId, userId])
+}
+
+model UserTag {
+  name   String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.Uuid
+
+  @@id([name, userId])
 }
