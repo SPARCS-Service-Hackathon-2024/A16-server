@@ -24,13 +24,13 @@ export class UserResponseDto {
   @Exclude()
   readonly provider: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   @Type(() => UserResponseDto)
   @Transform(({ value }) => value.length, { toPlainOnly: true })
   @Expose()
   readonly followings: UserResponseDto[];
 
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   @Type(() => UserResponseDto)
   @Transform(({ value }) => value.length, { toPlainOnly: true })
   @Expose()
