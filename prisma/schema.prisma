@@ -81,11 +81,11 @@ model ReviewWith {
 }
 
 model ReviewTag {
-  tag      String
+  name     String
   review   Review @relation(fields: [reviewId], references: [id])
   reviewId String @db.Uuid
 
-  @@id([tag, reviewId])
+  @@id([name, reviewId])
 }
 
 model Place {
