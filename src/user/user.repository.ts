@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -54,6 +54,11 @@ export class UserRepository {
     user: User,
     { bio, tags, nickname }: { bio: string; tags: string[]; nickname: string },
   ) {
+    const checkNickname = await this.prismaService.user.findFirst({
+      where: { nickname },
+    });
+    if (checkNickname && checkNickname.id !== user.id)
+      throw new ConflictException();
     await this.prismaService.user.update({
       where: { id: user.id },
       data: {
