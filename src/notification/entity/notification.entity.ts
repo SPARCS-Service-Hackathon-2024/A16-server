@@ -1,27 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 
+enum NotificationType {
+  COMMENT = 'COMMENT',
+  LIKE = 'LIKE',
+  FOLLOW = 'FOLLOW',
+}
+
 export class NotificationEntity {
   @ApiProperty()
   @Expose()
   id: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: NotificationType, enumName: 'NotificationType' })
   @Expose()
-  title: string;
+  type: NotificationType;
 
   @ApiProperty()
-  @Expose()
-  description: string;
-
-  @ApiProperty()
-  @Expose()
-  link: string;
-
-  @ApiProperty()
-  @Expose()
-  isRead: boolean;
-
   @ApiProperty()
   @Expose()
   createdAt: Date;
