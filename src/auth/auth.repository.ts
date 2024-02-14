@@ -130,4 +130,14 @@ export class AuthRepository {
       publicKey: exported,
     });
   }
+
+  async findUserByKakao(email: string, id: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: { email, provider: 'KAKAO' },
+    });
+    if (!user) return null;
+    const result = await bcrypt.compare(id, user.password);
+    if (!result) return null;
+    return user;
+  }
 }

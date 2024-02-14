@@ -7,6 +7,7 @@ import {
   Post,
 } from '@nestjs/common';
 import {
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiResponse,
@@ -137,8 +138,12 @@ export class AuthKakaoController {
     return this.authService.registerWithKakao(body);
   }
 
+  @ApiOperation({ summary: 'login by kakao' })
+  @ApiOkResponse({ type: LoginResponseDto })
+  @ApiNotFoundResponse({ description: 'Not Found' })
+  @HttpCode(HttpStatus.OK)
   @Post('login')
-  getHello4(): string {
-    return 'Hello World!';
+  loginWithKakao(@Body() { code }: KakaoVerifyDto) {
+    return this.authService.loginWithKakao(code);
   }
 }

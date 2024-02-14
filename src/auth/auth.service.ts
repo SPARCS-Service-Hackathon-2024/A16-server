@@ -117,4 +117,16 @@ export class AuthService {
     if (email !== body.email) throw new BadRequestException();
     await this.authRepository.createUser(body, 'KAKAO');
   }
+
+  async loginWithKakao(code: string) {
+    const token = await this.authRepository.getKakaoIdToken(code);
+    const payload = token.split('.')[1];
+    const decoded = Buffer.from(payload, 'base64').toString();
+    const { sub, email } = JSON.parse(decoded);
+    if (!sub || !email) throw new UnauthorizedException();
+    const user = await this.authRepository.findUserByKakao(email, sub);
+    if (!user) throw new NotFoundException();
+    const accessToken = await this.jwtService.signAsync({ id: user.id });
+    return { accessToken };
+  }
 }
