@@ -7,7 +7,7 @@ import CategoryMenu from './component/CategoryMenu';
 
 export default function Home() {
     return (
-        <div className='h-[100%] pt-[56px] '>
+        <div className='h-[100%] pt-[56px] pb-[70px] '>
             <Header alarm={true} review={true} search={true} />
             <div className='mx-[10%]'>
             <BannerSlider />

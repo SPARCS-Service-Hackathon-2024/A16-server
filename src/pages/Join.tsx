@@ -7,7 +7,7 @@ import Header from './component/Header';
 export default function Join() {
     return (
         <div className='h-[100vh]'>
-            <Header text='회원가입' back={true} alarm={false} review={false} search={false} setting={false} />
+            <Header text='회원가입' back={true} border={true} />
             <div className='relative mx-[10%] pt-[50px] h-[100%]'>
                 <Input type="text" text='abcde@gmail.com' label='이메일' errorMsg='규칙에 맞는 이메일을 입력해주세요!' className='mt-[10%] h-[115px]'/>
                 <Input type="password" text='영어 대소문자, 숫자로 구성' label='비밀번호' className='h-[115px]'/>
