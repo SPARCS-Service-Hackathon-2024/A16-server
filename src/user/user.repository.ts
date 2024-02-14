@@ -30,4 +30,22 @@ export class UserRepository {
     });
     return !!following;
   }
+
+  async followUser(userId: string, targetId: string) {
+    await this.prismaService.following.create({
+      data: {
+        userId,
+        followingId: targetId,
+      },
+    });
+  }
+
+  async unfollowUser(userId: string, targetId: string) {
+    await this.prismaService.following.deleteMany({
+      where: {
+        userId,
+        followingId: targetId,
+      },
+    });
+  }
 }

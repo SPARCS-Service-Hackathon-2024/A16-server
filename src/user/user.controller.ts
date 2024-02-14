@@ -1,4 +1,11 @@
-import { Controller, Get, HttpStatus, Param } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -7,11 +14,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { User } from '@prisma/client';
+import { GetUserInfoDto } from './dto/get-user-info.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { GetUser } from './get-user.decoration';
 import { UserService } from './user.service';
-import { GetUserInfoDto } from './dto/get-user-info.dto';
-import { TransformInstanceToPlain } from 'class-transformer';
 
 @ApiTags('user')
 @ApiBearerAuth()
@@ -22,7 +28,6 @@ export class UserController {
   @ApiOperation({ summary: 'user data' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   @Get('me')
-  @TransformInstanceToPlain()
   getUser(@GetUser() user: User) {
     return this.userService.getUserInfo(user);
   }
@@ -31,8 +36,21 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   @ApiParam({ format: 'uuid', name: 'id' })
   @Get(':id')
-  @TransformInstanceToPlain()
   getUserById(@GetUser() user: User, @Param() { id }: GetUserInfoDto) {
     return this.userService.getUserInfoById(user, id);
+  }
+
+  @ApiOperation({ summary: 'follow user' })
+  @Post(':id/follow')
+  @ApiParam({ format: 'uuid', name: 'id' })
+  followUser(@GetUser() user: User, @Param() { id }: GetUserInfoDto) {
+    return this.userService.followUser(user, id);
+  }
+
+  @ApiOperation({ summary: 'unfollow user' })
+  @Delete(':id/follow')
+  @ApiParam({ format: 'uuid', name: 'id' })
+  unfollowUser(@GetUser() user: User, @Param() { id }: GetUserInfoDto) {
+    return this.userService.unfollowUser(user, id);
   }
 }

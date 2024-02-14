@@ -102,4 +102,6 @@ model Following {
   followingId String
   User        User   @relation(fields: [userId], references: [id], name: "User")
   userId      String
+
+  @@unique([followingId, userId])
 }

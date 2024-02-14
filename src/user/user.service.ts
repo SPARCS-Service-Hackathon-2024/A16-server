@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import {
+  BadRequestException,
   Injectable,
   Logger,
   NotFoundException,
@@ -59,5 +60,17 @@ export class UserService {
     if (!foundUser) throw new NotFoundException();
     const isFollowing = await this.userRepository.isFollowing(user.id, id);
     return plainToInstance(UserResponseDto, { ...foundUser, isFollowing });
+  }
+
+  async followUser(user: User, targetId: string) {
+    if (user.id === targetId) throw new BadRequestException();
+    await this.userRepository.followUser(user.id, targetId);
+    return this.getUserInfoById(user, targetId);
+  }
+
+  async unfollowUser(user: User, targetId: string) {
+    if (user.id === targetId) throw new BadRequestException();
+    await this.userRepository.unfollowUser(user.id, targetId);
+    return this.getUserInfoById(user, targetId);
   }
 }
