@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -18,6 +19,7 @@ import { GetUserInfoDto } from './dto/get-user-info.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { GetUser } from './get-user.decoration';
 import { UserService } from './user.service';
+import { EditBioDto } from './dto/edit-bio.dto';
 
 @ApiTags('user')
 @ApiBearerAuth()
@@ -52,5 +54,17 @@ export class UserController {
   @ApiParam({ format: 'uuid', name: 'id' })
   unfollowUser(@GetUser() user: User, @Param() { id }: GetUserInfoDto) {
     return this.userService.unfollowUser(user, id);
+  }
+
+  @ApiOperation({ summary: 'add bio' })
+  @Post('bio')
+  addBio(@GetUser() user: User, @Body() { bio }: EditBioDto) {
+    return this.userService.addBio(user, bio);
+  }
+
+  @ApiOperation({ summary: 'delete bio' })
+  @Delete('bio')
+  deleteBio(@GetUser() user: User) {
+    return this.userService.deleteBio(user);
   }
 }

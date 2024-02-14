@@ -73,4 +73,14 @@ export class UserService {
     await this.userRepository.unfollowUser(user.id, targetId);
     return this.getUserInfoById(user, targetId);
   }
+
+  async addBio(user: User, bio: string) {
+    await this.userRepository.addBio(user, bio);
+    return this.getUserInfo(user);
+  }
+
+  async deleteBio(user: User) {
+    await this.userRepository.removeBio(user);
+    return this.getUserInfo(user);
+  }
 }

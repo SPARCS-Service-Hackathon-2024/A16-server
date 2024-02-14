@@ -14,6 +14,10 @@ export class UserResponseDto {
   @Expose()
   readonly nickname: string;
 
+  @ApiProperty({ required: false })
+  @Expose()
+  readonly bio?: string;
+
   @Exclude()
   readonly createdAt: Date;
 

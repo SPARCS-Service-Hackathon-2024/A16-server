@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -12,8 +13,7 @@ export class UserRepository {
         id: true,
         email: true,
         nickname: true,
-        provider: true,
-        createdAt: true,
+        bio: true,
         followers: true,
         followings: true,
       },
@@ -46,6 +46,20 @@ export class UserRepository {
         userId,
         followingId: targetId,
       },
+    });
+  }
+
+  async addBio(user: User, bio: string) {
+    await this.prismaService.user.update({
+      where: { id: user.id },
+      data: { bio },
+    });
+  }
+
+  async removeBio(user: User) {
+    await this.prismaService.user.update({
+      where: { id: user.id },
+      data: { bio: null },
     });
   }
 }
