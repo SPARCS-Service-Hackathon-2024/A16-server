@@ -19,8 +19,10 @@ export class KakaoRegisterDto {
   @IsNotEmpty()
   readonly nickname: string;
 
-  @ApiProperty({ format: 'password' })
-  @IsString()
-  @IsNotEmpty()
-  readonly password: string;
+  get password() {
+    const payload = this.emailVerificationToken.split('.')[1];
+    const decoded = Buffer.from(payload, 'base64').toString();
+    const { sub } = JSON.parse(decoded);
+    return sub as string;
+  }
 }

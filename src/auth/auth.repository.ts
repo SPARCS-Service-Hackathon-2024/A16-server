@@ -1,9 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { HttpService } from '@nestjs/axios';
 import { ApiConfigService } from 'src/api-config/api-config.service';
 import { firstValueFrom } from 'rxjs';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { JwtService } from '@nestjs/jwt';
+import { createPublicKey } from 'crypto';
+
+type Jwks = { keys: { kid: string }[] };
 
 @Injectable()
 export class AuthRepository {
@@ -11,6 +17,8 @@ export class AuthRepository {
     private readonly prismaService: PrismaService,
     private readonly httpService: HttpService,
     private readonly configService: ApiConfigService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private readonly jwtService: JwtService,
   ) {}
 
   async checkEmail(email: string): Promise<boolean> {
@@ -25,22 +33,21 @@ export class AuthRepository {
     return !!user;
   }
 
-  async createUserByEmail({
-    email,
-    password,
-    nickname,
-  }: {
-    email: string;
-    password: string;
-    nickname: string;
-  }) {
+  async createUser(
+    {
+      email,
+      password,
+      nickname,
+    }: { email: string; password: string; nickname: string },
+    provider: 'EMAIL' | 'KAKAO',
+  ) {
     const hashedPassword = await bcrypt.hash(password, await bcrypt.genSalt());
     const user = await this.prismaService.user.create({
       data: {
         email,
         password: hashedPassword,
         nickname,
-        provider: 'EMAIL',
+        provider,
       },
     });
     return user;
@@ -80,7 +87,7 @@ export class AuthRepository {
     return `https://kauth.kakao.com/oauth/authorize?client_id=${this.configService.kakaoApiKey}&redirect_uri=${this.configService.kakaoRedirectUrl}&response_type=code`;
   }
 
-  async verifyKakaoToken(code: string) {
+  async getKakaoIdToken(code: string) {
     const $ = this.httpService.post('https://kauth.kakao.com/oauth/token', {
       params: {
         grant_type: 'authorization_code',
@@ -95,5 +102,32 @@ export class AuthRepository {
     });
     const { id_token } = (await firstValueFrom($)).data;
     return id_token as string;
+  }
+
+  private async getKakaoJwks(): Promise<Jwks> {
+    const cached = await this.cacheManager.get<Jwks>('kakao-jwks');
+    if (cached) return cached;
+    const $ = this.httpService.get(
+      'https://kauth.kakao.com/.well-known/jwks.json',
+    );
+    const jwks = (await firstValueFrom($)).data;
+    await this.cacheManager.set('kakao-jwks', jwks, 24 * 60 * 60 * 1000);
+    return jwks;
+  }
+
+  async verifyKakaoToken(token: string) {
+    const jwks = await this.getKakaoJwks();
+    const { header } = this.jwtService.decode(token, { complete: true });
+    if (!header) throw new UnauthorizedException();
+    const key = jwks.keys.find((k) => k.kid === header.kid);
+    if (!key) throw new UnauthorizedException();
+    const publicKey = createPublicKey({ key, format: 'jwk' });
+    const exported = publicKey.export({ type: 'pkcs1', format: 'pem' });
+    return this.jwtService.verifyAsync(token, {
+      issuer: 'https://kapi.kakao.com',
+      audience: this.configService.kakaoApiKey,
+      algorithms: ['RS256'],
+      publicKey: exported,
+    });
   }
 }

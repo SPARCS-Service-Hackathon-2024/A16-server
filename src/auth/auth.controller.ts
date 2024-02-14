@@ -133,8 +133,8 @@ export class AuthKakaoController {
     description: 'Conflict - email or nickname already exists',
   })
   @Post('register')
-  registerWithKakao(@Body() body: KakaoRegisterDto): string {
-    return 'Hello World!';
+  registerWithKakao(@Body() body: KakaoRegisterDto) {
+    return this.authService.registerWithKakao(body);
   }
 
   @Post('login')
