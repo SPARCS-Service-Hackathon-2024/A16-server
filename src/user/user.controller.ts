@@ -11,6 +11,7 @@ import { UserResponseDto } from './dto/user-response.dto';
 import { GetUser } from './get-user.decoration';
 import { UserService } from './user.service';
 import { GetUserInfoDto } from './dto/get-user-info.dto';
+import { TransformInstanceToPlain } from 'class-transformer';
 
 @ApiTags('user')
 @ApiBearerAuth()
@@ -21,6 +22,7 @@ export class UserController {
   @ApiOperation({ summary: 'user data' })
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   @Get('me')
+  @TransformInstanceToPlain()
   getUser(@GetUser() user: User) {
     return this.userService.getUserInfo(user);
   }
@@ -29,6 +31,7 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
   @ApiParam({ format: 'uuid', name: 'id' })
   @Get(':id')
+  @TransformInstanceToPlain()
   getUserById(@GetUser() user: User, @Param() { id }: GetUserInfoDto) {
     return this.userService.getUserInfoById(user, id);
   }

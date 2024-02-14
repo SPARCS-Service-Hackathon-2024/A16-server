@@ -1,5 +1,10 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { User } from '@prisma/client';
 import { AxiosError } from 'axios';
 import { plainToInstance } from 'class-transformer';
@@ -50,7 +55,9 @@ export class UserService {
   }
 
   async getUserInfoById(user: User, id: string) {
-    const foundUser = this.userRepository.findUserById(id);
-    return plainToInstance(UserResponseDto, foundUser);
+    const foundUser = await this.userRepository.findUserById(id);
+    if (!foundUser) throw new NotFoundException();
+    const isFollowing = await this.userRepository.isFollowing(user.id, id);
+    return plainToInstance(UserResponseDto, { ...foundUser, isFollowing });
   }
 }

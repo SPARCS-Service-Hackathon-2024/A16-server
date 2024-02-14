@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
 
 export class UserResponseDto {
   @ApiProperty()
@@ -19,4 +19,20 @@ export class UserResponseDto {
 
   @Exclude()
   readonly provider: string;
+
+  @ApiProperty()
+  @Type(() => UserResponseDto)
+  @Transform(({ value }) => value.length, { toPlainOnly: true })
+  @Expose()
+  readonly followings: UserResponseDto[];
+
+  @ApiProperty()
+  @Type(() => UserResponseDto)
+  @Transform(({ value }) => value.length, { toPlainOnly: true })
+  @Expose()
+  readonly followers: UserResponseDto[];
+
+  @ApiProperty()
+  @Expose()
+  readonly isFollowing: boolean;
 }

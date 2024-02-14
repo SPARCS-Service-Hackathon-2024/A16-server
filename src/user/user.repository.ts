@@ -14,8 +14,20 @@ export class UserRepository {
         nickname: true,
         provider: true,
         createdAt: true,
+        followers: true,
+        followings: true,
       },
     });
     return user;
+  }
+
+  async isFollowing(userId: string, targetId: string) {
+    const following = await this.prismaService.following.findFirst({
+      where: {
+        userId: userId,
+        followingId: targetId,
+      },
+    });
+    return !!following;
   }
 }
