@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsArray } from 'class-validator';
+import { With } from '../enums/review-with.enum';
 
 enum Region {
   서구 = '서구',
@@ -8,14 +9,6 @@ enum Region {
   유성구 = '유성구',
   대덕구 = '대덕구',
   동구 = '동구',
-}
-
-enum With {
-  연인 = '연인',
-  부모님 = '부모님',
-  가족 = '가족',
-  친구 = '친구',
-  단체 = '단체',
 }
 
 export class ReviewSearchDto {
