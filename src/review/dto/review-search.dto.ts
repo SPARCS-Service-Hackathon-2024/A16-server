@@ -33,9 +33,9 @@ export class ReviewSearchDto {
     isArray: true,
   })
   @Type(() => String)
-  @Transform(({ value }) => [...new Set(value.split(','))])
+  @Transform(({ value }) => [...new Set(value.split(','))].filter(Boolean))
   @IsArray()
-  readonly with?: With;
+  readonly with: With[] = [];
 
   @ApiProperty({
     required: false,
