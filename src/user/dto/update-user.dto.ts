@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { ArrayMaxSize, IsArray, IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateUserDto {
   @ApiProperty()
@@ -13,7 +13,7 @@ export class UpdateUserDto {
 
   @ApiProperty()
   @IsArray()
-  @IsString()
-  @MaxLength(3)
+  @IsString({ each: true })
+  @ArrayMaxSize(3)
   tags: string[];
 }
