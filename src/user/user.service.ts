@@ -6,6 +6,7 @@ import { plainToInstance } from 'class-transformer';
 import { catchError, firstValueFrom } from 'rxjs';
 import { ApiConfigService } from 'src/api-config/api-config.service';
 import { UserResponseDto } from './dto/user-response.dto';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
@@ -13,6 +14,7 @@ export class UserService {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ApiConfigService,
+    private readonly userRepository: UserRepository,
   ) {}
 
   private async getAccessToken(authorizationCode: string) {
@@ -44,6 +46,11 @@ export class UserService {
   }
 
   async getUserInfo(user: User) {
-    return plainToInstance(UserResponseDto, user);
+    return this.getUserInfoById(user, user.id);
+  }
+
+  async getUserInfoById(user: User, id: string) {
+    const foundUser = this.userRepository.findUserById(id);
+    return plainToInstance(UserResponseDto, foundUser);
   }
 }

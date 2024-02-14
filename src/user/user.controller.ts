@@ -1,7 +1,8 @@
-import { Controller, Get, HttpStatus } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Param } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -9,6 +10,7 @@ import { User } from '@prisma/client';
 import { UserResponseDto } from './dto/user-response.dto';
 import { GetUser } from './get-user.decoration';
 import { UserService } from './user.service';
+import { GetUserInfoDto } from './dto/get-user-info.dto';
 
 @ApiTags('user')
 @ApiBearerAuth()
@@ -21,5 +23,13 @@ export class UserController {
   @Get('me')
   getUser(@GetUser() user: User) {
     return this.userService.getUserInfo(user);
+  }
+
+  @ApiOperation({ summary: 'get user info by id' })
+  @ApiResponse({ status: HttpStatus.OK, type: UserResponseDto })
+  @ApiParam({ format: 'uuid', name: 'id' })
+  @Get(':id')
+  getUserById(@GetUser() user: User, @Param() { id }: GetUserInfoDto) {
+    return this.userService.getUserInfoById(user, id);
   }
 }

@@ -5,5 +5,17 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createUser() {}
+  async findUserById(id: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        nickname: true,
+        provider: true,
+        createdAt: true,
+      },
+    });
+    return user;
+  }
 }
