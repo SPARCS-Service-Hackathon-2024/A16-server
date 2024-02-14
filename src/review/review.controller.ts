@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ReviewSearchDto } from './dto/review-search.dto';
-import { ReviewRecommendedDto } from './dto/review-recommended.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
+import { ReviewRecommendedDto } from './dto/review-recommended.dto';
+import { ReviewSearchDto } from './dto/review-search.dto';
 
 @Controller('reviews')
 @ApiTags('review')
@@ -25,4 +25,13 @@ export class ReviewController {
   async create(@Body() body: CreateReviewDto) {
     console.log(body);
   }
+}
+
+@Controller('user')
+@ApiTags('review')
+@ApiBearerAuth()
+export class ReviewUserController {
+  @ApiOperation({ summary: 'get user reviews' })
+  @Get(':id/reviews')
+  async getUserReviews() {}
 }
