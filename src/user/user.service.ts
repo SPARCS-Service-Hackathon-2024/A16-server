@@ -1,8 +1,11 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { AxiosError } from 'axios';
+import { plainToInstance } from 'class-transformer';
 import { catchError, firstValueFrom } from 'rxjs';
 import { ApiConfigService } from 'src/api-config/api-config.service';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @Injectable()
 export class UserService {
@@ -38,5 +41,9 @@ export class UserService {
   async login(authorizationCode: string) {
     const accessToken = await this.getAccessToken(authorizationCode);
     return accessToken;
+  }
+
+  async getUserInfo(user: User) {
+    return plainToInstance(UserResponseDto, user);
   }
 }
