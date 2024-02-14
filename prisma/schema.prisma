@@ -21,7 +21,7 @@ model User {
   provider      AuthProvider
   email         String         @unique
   password      String
-  bio           String?
+  bio           String         @default("")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   notifications Notification[]
