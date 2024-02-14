@@ -29,4 +29,8 @@ export class ApiConfigService {
   get jwtSecret(): string {
     return this.configService.get<string>('JWT_SECRET')!;
   }
+
+  get kakaoApiSecret(): string {
+    return this.configService.get<string>('KAKAO_API_SECRET')!;
+  }
 }

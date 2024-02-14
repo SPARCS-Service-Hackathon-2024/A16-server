@@ -33,6 +33,9 @@ class EnvironmentVariables {
 
   @IsString()
   JWT_SECRET: string;
+
+  @IsString()
+  KAKAO_API_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {

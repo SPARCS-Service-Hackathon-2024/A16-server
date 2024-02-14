@@ -6,6 +6,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Cache } from 'cache-manager';
@@ -13,7 +14,7 @@ import * as crypto from 'crypto';
 import { AuthRepository } from './auth.repository';
 import { EmailLoginDto } from './dto/email-login.dto';
 import { EmailRegisterDto } from './dto/email-register.dto';
-import { EmailVerificationDto } from './dto/email-verification.dto';
+import { VerificationDto } from './dto/verification.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 
 @Injectable()
@@ -75,7 +76,7 @@ export class AuthService {
     }
     await this.cacheManager.del(email);
     const token = this.generateEmailVerificationToken(email);
-    return new EmailVerificationDto(token);
+    return new VerificationDto(token, email);
   }
 
   async registerByEmail(body: EmailRegisterDto) {
@@ -90,5 +91,19 @@ export class AuthService {
     if (!user) throw new NotFoundException();
     const token = await this.jwtService.signAsync({ id: user.id });
     return { accessToken: token };
+  }
+
+  async getKakaoAuthorizeUrl() {
+    return this.authRepository.getKakaoAuthorizeUrl();
+  }
+
+  async verifyKakaoToken(code: string) {
+    const token = await this.authRepository.verifyKakaoToken(code);
+    const payload = token.split('.')[1];
+    const decoded = Buffer.from(payload, 'base64').toString();
+    const { email } = JSON.parse(decoded);
+    if (!email) throw new UnauthorizedException();
+    await this.checkEmail(email);
+    return new VerificationDto(token, email);
   }
 }
