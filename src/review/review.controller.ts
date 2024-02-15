@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -64,6 +65,7 @@ export class ReviewController {
   }
 
   @ApiOperation({ summary: 'create review' })
+  @ApiCreatedResponse({ type: ReviewSummaryDto })
   @Post()
   async create(@GetUser() user: User, @Body() body: CreateReviewDto) {
     return this.reviewService.writeReview(user, body);
