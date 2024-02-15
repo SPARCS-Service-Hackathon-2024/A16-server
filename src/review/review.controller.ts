@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -15,6 +23,7 @@ import { GetUser } from 'src/user/get-user.decoration';
 import { User } from '@prisma/client';
 import { Region } from './enums/review-region.enum';
 import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
+import { ReviewOneDto } from './dto/review-one.dto';
 
 @Controller('reviews')
 @ApiTags('review')
@@ -48,6 +57,18 @@ export class ReviewController {
   @Post()
   async create(@Body() body: CreateReviewDto) {
     console.log(body);
+  }
+
+  @ApiOperation({ summary: 'like review' })
+  @Post(':id/like')
+  async like(@GetUser() user: User, @Param() { id }: ReviewOneDto) {
+    console.log({ id, action: 'like' });
+  }
+
+  @ApiOperation({ summary: 'dislike review' })
+  @Delete(':id/like')
+  async dislike(@GetUser() user: User, @Param() { id }: ReviewOneDto) {
+    console.log({ id, action: 'dislike' });
   }
 }
 

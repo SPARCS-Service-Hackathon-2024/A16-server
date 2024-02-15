@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Region } from './enums/review-region.enum';
 import { With } from './enums/review-with.enum';
-import { Prisma, User } from '@prisma/client';
 
 @Injectable()
 export class ReviewRepository {
@@ -80,6 +80,32 @@ export class ReviewRepository {
         id: { in: list.map((review) => review.id) },
         likes: { some: { userId: user.id } },
       },
+    });
+  }
+
+  async isLiked(user: User, reviewId: string) {
+    const count = await this.prismaService.reviewLike.count({
+      where: { userId: user.id, reviewId },
+    });
+    return count > 0;
+  }
+
+  async like(user: User, reviewId: string) {
+    await this.prismaService.reviewLike.create({
+      data: { userId: user.id, reviewId },
+    });
+  }
+
+  async unlike(user: User, reviewId: string) {
+    await this.prismaService.reviewLike.deleteMany({
+      where: { userId: user.id, reviewId },
+    });
+  }
+
+  async getReview(user: User, reviewId: string) {
+    return await this.prismaService.review.findFirst({
+      where: { id: reviewId },
+      include: this.include(user.id),
     });
   }
 }

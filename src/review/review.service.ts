@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ReviewRepository } from './review.repository';
 import { ReviewSearchDto } from './dto/review-search.dto';
 import { SearchResultDto } from './dto/search-result.dto';
@@ -37,5 +37,19 @@ export class ReviewService {
       })),
       count,
     });
+  }
+
+  async like(user: User, reviewId: string) {
+    if (await this.reviewRepository.isLiked(user, reviewId)) {
+      throw new ConflictException('already liked');
+    }
+    await this.reviewRepository.like(user, reviewId);
+  }
+
+  async unlike(user: User, reviewId: string) {
+    if (!(await this.reviewRepository.isLiked(user, reviewId))) {
+      throw new ConflictException('not liked');
+    }
+    await this.reviewRepository.unlike(user, reviewId);
   }
 }
