@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Max, MaxLength, Min, MinLength } from 'class-validator';
+import { IsInt, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { With } from '../enums/review-with.enum';
 
 export class CreateReviewDto {
@@ -10,8 +10,9 @@ export class CreateReviewDto {
   readonly videoToken: string;
 
   @ApiProperty()
+  @IsInt()
   @Min(0)
-  @Max(10)
+  @Max(5)
   readonly stars: number;
 
   @ApiProperty({ enum: With, enumName: 'With', isArray: true })
