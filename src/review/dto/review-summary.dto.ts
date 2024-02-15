@@ -1,37 +1,69 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Review } from '@prisma/client';
-import { Exclude, Expose } from 'class-transformer';
+import { Place, Review, ReviewFile } from '@prisma/client';
+import { Exclude, Expose, Type } from 'class-transformer';
+
+class PlaceDto implements Place {
+  @ApiProperty({ format: 'uuid' })
+  @Expose()
+  readonly id: string;
+
+  @ApiProperty()
+  @Expose()
+  readonly name: string;
+
+  readonly region: string;
+  readonly address: string;
+  readonly lat: number;
+  readonly lng: number;
+}
+
+class FileDto implements ReviewFile {
+  @ApiProperty()
+  @Expose()
+  readonly id: string;
+
+  @ApiProperty()
+  @Expose()
+  readonly url: string;
+
+  readonly reviewId: string;
+}
 
 export class ReviewSummaryDto implements Review {
   @ApiProperty({ format: 'uuid' })
   @Expose()
-  id: string;
+  readonly id: string;
 
   @ApiProperty()
   @Expose()
-  title: string;
+  readonly title: string;
 
   @ApiProperty()
   @Expose()
-  createdAt: Date;
+  readonly createdAt: Date;
 
   @Exclude()
-  userId: string;
+  readonly userId: string;
 
   @ApiProperty()
   @Expose()
-  stars: number;
+  readonly stars: number;
 
   @ApiProperty()
   @Expose()
-  content: string;
+  readonly content: string;
 
-  @Exclude()
-  placeId: string;
+  @ApiProperty({ type: PlaceDto })
+  @Type(() => PlaceDto)
+  @Expose()
+  readonly place: PlaceDto;
 
-  @Exclude()
-  updatedAt: Date;
+  @ApiProperty({ type: FileDto, isArray: true })
+  @Type(() => FileDto)
+  @Expose()
+  readonly files: FileDto[];
 
-  @Exclude()
-  deletedAt: Date;
+  readonly placeId: string;
+  readonly updatedAt: Date;
+  readonly deletedAt: Date;
 }
