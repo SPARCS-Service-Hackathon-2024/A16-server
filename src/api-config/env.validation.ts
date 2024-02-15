@@ -2,6 +2,7 @@ import { plainToInstance } from 'class-transformer';
 import {
   IsEnum,
   IsNumber,
+  IsNumberString,
   IsString,
   IsUrl,
   validateSync,
@@ -36,6 +37,18 @@ class EnvironmentVariables {
 
   @IsString()
   KAKAO_API_SECRET: string;
+
+  @IsString()
+  MINIO_ENDPOINT: string;
+
+  @IsNumberString()
+  MINIO_PORT: string;
+
+  @IsString()
+  MINIO_ACCESS_KEY: string;
+
+  @IsString()
+  MINIO_SECRET_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {

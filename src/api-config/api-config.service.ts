@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Environment } from './env.validation';
+import { ClientOptions } from 'minio';
 
 @Injectable()
 export class ApiConfigService {
@@ -32,5 +33,15 @@ export class ApiConfigService {
 
   get kakaoApiSecret(): string {
     return this.configService.get<string>('KAKAO_API_SECRET')!;
+  }
+
+  get minioConfig(): ClientOptions {
+    return {
+      endPoint: this.configService.get<string>('MINIO_ENDPOINT')!,
+      port: parseInt(this.configService.get<string>('MINIO_PORT')!),
+      useSSL: false,
+      accessKey: this.configService.get<string>('MINIO_ACCESS_KEY')!,
+      secretKey: this.configService.get<string>('MINIO_SECRET_KEY')!,
+    };
   }
 }
