@@ -9,9 +9,13 @@ export class FileRepository {
     private readonly minioService: MinioService,
   ) {}
 
+  get(id: any) {
+    return this.prismaService.file.findUnique({ where: { id } });
+  }
+
   async upload(file: Express.Multer.File, type: 'VIDEO') {
     const data = await this.prismaService.file.create({
-      data: { originalName: file.originalname },
+      data: { originalName: file.originalname, type: 'VIDEO' },
     });
     await this.minioService.client.putObject(
       { VIDEO: 'videos' }[type],
@@ -25,7 +29,11 @@ export class FileRepository {
 
   async uploadThumbnail(buffer: Buffer, id: string) {
     const data = await this.prismaService.file.create({
-      data: { originalName: `${id}.png`, original: { connect: { id } } },
+      data: {
+        originalName: `${id}.png`,
+        type: 'THUMBNAIL',
+        original: { connect: { id } },
+      },
     });
     await this.minioService.client.putObject(
       'thumbnails',

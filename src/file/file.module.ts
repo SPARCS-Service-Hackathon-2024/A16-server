@@ -18,5 +18,6 @@ import * as crypto from 'crypto';
   ],
   controllers: [FileController],
   providers: [FileService, FileRepository],
+  exports: [FileService],
 })
 export class FileModule {}

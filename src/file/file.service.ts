@@ -52,4 +52,14 @@ export class FileService {
     const token = this.jwtService.sign(payload);
     return { token };
   }
+
+  /**
+   * @returns video id
+   */
+  async verifyVideoToken(token: string) {
+    const { id } = this.jwtService.verify(token);
+    const file = await this.fileRepository.get(id);
+    if (file?.type !== 'VIDEO') throw new Error('invalid token');
+    return id;
+  }
 }
