@@ -179,7 +179,7 @@ export class ReviewRepository {
       data: {
         userId: user.id,
         placeId: place.id,
-        files: { connect: { fileId: videoId } },
+        files: { create: { fileId: videoId } },
         content,
         stars,
         withs: { create: withs.map((w) => ({ with: w })) },
