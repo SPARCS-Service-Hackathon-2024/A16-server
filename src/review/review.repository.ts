@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
 import { Region } from './enums/review-region.enum';
 import { With } from './enums/review-with.enum';
-import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -148,6 +148,36 @@ export class ReviewRepository {
       skip: dto.skip,
       take: dto.take,
       include: this.include(user.id),
+    });
+  }
+
+  writeReview({
+    user,
+    placeId,
+    videoId,
+    content,
+    stars,
+    with: withs,
+    tags,
+  }: {
+    user: User;
+    placeId: string;
+    videoId: string;
+    content: string;
+    stars: number;
+    with: With[];
+    tags: string[];
+  }) {
+    return this.prismaService.review.create({
+      data: {
+        userId: user.id,
+        placeId,
+        files: { connect: { fileId: videoId } },
+        content,
+        stars,
+        withs: { create: withs.map((w) => ({ with: w })) },
+        tags: { create: tags.map((name) => ({ name })) },
+      },
     });
   }
 }

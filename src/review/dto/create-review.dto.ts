@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { IsInt, IsJWT, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { With } from '../enums/review-with.enum';
 
 export class CreateReviewDto {
   @ApiProperty()
-  readonly address: string;
+  readonly placeId: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'JWT token from video upload' })
+  @IsJWT()
   readonly videoToken: string;
 
   @ApiProperty()

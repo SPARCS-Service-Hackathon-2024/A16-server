@@ -65,8 +65,8 @@ export class ReviewController {
 
   @ApiOperation({ summary: 'create review' })
   @Post()
-  async create(@Body() body: CreateReviewDto) {
-    console.log(body);
+  async create(@GetUser() user: User, @Body() body: CreateReviewDto) {
+    return this.reviewService.writeReview(user, body);
   }
 
   @ApiOperation({ summary: 'get review' })

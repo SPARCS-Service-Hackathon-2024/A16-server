@@ -12,10 +12,15 @@ import { User } from '@prisma/client';
 import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
 import { CommentDto } from './dto/comment.dto';
 import { ReviewSummaryDto } from './dto/review-summary.dto';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { FileService } from 'src/file/file.service';
 
 @Injectable()
 export class ReviewService {
-  constructor(private readonly reviewRepository: ReviewRepository) {}
+  constructor(
+    private readonly reviewRepository: ReviewRepository,
+    private readonly fileService: FileService,
+  ) {}
 
   async searchReview(
     user: User,
@@ -102,5 +107,15 @@ export class ReviewService {
     if (comment.userId !== user.id)
       throw new ConflictException('not your comment');
     await this.reviewRepository.deleteComment(commentId);
+  }
+
+  async writeReview(user: User, { videoToken, ...body }: CreateReviewDto) {
+    const videoId = await this.fileService.verifyVideoToken(videoToken);
+    const review = await this.reviewRepository.writeReview({
+      user,
+      ...body,
+      videoId,
+    });
+    return this.getReview(user, review.id);
   }
 }
