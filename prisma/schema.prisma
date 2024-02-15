@@ -95,13 +95,20 @@ model ReviewTag {
 }
 
 model Place {
-  id      String   @id @default(uuid()) @db.Uuid
-  address String   @unique
-  region  String
-  name    String
-  lat     Float
-  lng     Float
-  reviews Review[]
+  id                String   @id @default(uuid()) @db.Uuid
+  region            String
+  oid               String   @unique
+  name              String
+  categoryName      String
+  categoryGroupName String
+  categoryGroupCode String
+  phone             String
+  addressName       String
+  roadAddressName   String
+  lat               Float
+  lng               Float
+  placeUrl          String
+  Review            Review[]
 }
 
 model Following {
