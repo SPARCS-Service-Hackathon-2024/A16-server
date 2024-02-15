@@ -32,14 +32,14 @@ export class PlaceRepository {
     const { data } = await firstValueFrom($);
     const result = plainToInstance(SearchResultDto, objectToCamel(data));
     await this.prismaService.$transaction(
-      result.documents.map(({ id, placeName, ...d }) =>
+      result.documents.map(({ id, placeName, x, y, distance: _, ...d }) =>
         this.prismaService.place.upsert({
           where: { oid: id },
           update: {
             ...d,
             name: placeName,
-            lat: Number.parseFloat(d.x),
-            lng: Number.parseFloat(d.y),
+            lat: Number.parseFloat(x),
+            lng: Number.parseFloat(y),
           },
           create: {
             ...d,
@@ -48,8 +48,8 @@ export class PlaceRepository {
             )[0],
             oid: id,
             name: placeName,
-            lat: Number.parseFloat(d.x),
-            lng: Number.parseFloat(d.y),
+            lat: Number.parseFloat(x),
+            lng: Number.parseFloat(y),
           },
         }),
       ),
