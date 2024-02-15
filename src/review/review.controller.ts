@@ -24,6 +24,7 @@ import { User } from '@prisma/client';
 import { Region } from './enums/review-region.enum';
 import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
 import { ReviewOneDto } from './dto/review-one.dto';
+import { WriteCommentDto } from './dto/write-comment.dto';
 
 @Controller('reviews')
 @ApiTags('review')
@@ -62,13 +63,29 @@ export class ReviewController {
   @ApiOperation({ summary: 'like review' })
   @Post(':id/like')
   async like(@GetUser() user: User, @Param() { id }: ReviewOneDto) {
-    console.log({ id, action: 'like' });
+    this.reviewService.like(user, id);
   }
 
   @ApiOperation({ summary: 'dislike review' })
   @Delete(':id/like')
-  async dislike(@GetUser() user: User, @Param() { id }: ReviewOneDto) {
-    console.log({ id, action: 'dislike' });
+  async unlike(@GetUser() user: User, @Param() { id }: ReviewOneDto) {
+    this.reviewService.unlike(user, id);
+  }
+
+  @ApiOperation({ summary: 'get review comments' })
+  @Get(':id/comments')
+  async get(@Param() { id }: ReviewOneDto) {
+    return this.reviewService.getComments(id);
+  }
+
+  @ApiOperation({ summary: 'comment review' })
+  @Post(':id/comments')
+  async comment(
+    @GetUser() user: User,
+    @Param() { id }: ReviewOneDto,
+    @Body() body: WriteCommentDto,
+  ) {
+    return this.reviewService.writeComment(user, id, body.content);
   }
 }
 

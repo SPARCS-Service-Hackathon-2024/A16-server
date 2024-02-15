@@ -5,6 +5,7 @@ import { SearchResultDto } from './dto/search-result.dto';
 import { plainToInstance } from 'class-transformer';
 import { User } from '@prisma/client';
 import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
+import { CommentDto } from './dto/comment.dto';
 
 @Injectable()
 export class ReviewService {
@@ -51,5 +52,14 @@ export class ReviewService {
       throw new ConflictException('not liked');
     }
     await this.reviewRepository.unlike(user, reviewId);
+  }
+
+  async getComments(id: string) {
+    const list = await this.reviewRepository.getComments(id);
+    return plainToInstance(CommentDto, list);
+  }
+
+  async writeComment(user: User, reviewId: string, content: string) {
+    await this.reviewRepository.writeComment(user, reviewId, content);
   }
 }

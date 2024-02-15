@@ -2,9 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   $Enums,
   Place,
-  Review,
+  Prisma,
   ReviewFile,
-  ReviewLike,
   ReviewTag,
   User,
 } from '@prisma/client';
@@ -64,7 +63,17 @@ class UserDto implements User {
   followers: User[];
 }
 
-export class ReviewSummaryDto implements Review {
+export class ReviewSummaryDto
+  implements
+    Prisma.ReviewGetPayload<{
+      include: {
+        place: true;
+        files: true;
+        tags: true;
+        _count: { select: { likes: true; comments: true } };
+      };
+    }>
+{
   @ApiProperty({ format: 'uuid' })
   @Expose()
   readonly id: string;
@@ -103,7 +112,7 @@ export class ReviewSummaryDto implements Review {
     toPlainOnly: true,
   })
   @Expose()
-  readonly tags: string[];
+  readonly tags: ReviewTag[];
 
   @ApiProperty({ type: UserDto })
   @Type(() => UserDto)
@@ -111,17 +120,23 @@ export class ReviewSummaryDto implements Review {
   readonly user: UserDto;
 
   @ApiProperty({ type: Number })
-  @Transform(({ value }) => value.length, { toPlainOnly: true })
   @Expose()
-  readonly likes: ReviewLike[];
-
-  @ApiProperty({ type: Boolean })
-  @Expose()
-  get liked() {
-    return this.likes.length !== 0;
+  get likes() {
+    return this._count.likes;
   }
+
+  @ApiProperty({ type: Number })
+  @Expose()
+  get comments() {
+    return this._count.comments;
+  }
+
+  @ApiProperty()
+  @Expose()
+  readonly liked: boolean;
 
   readonly placeId: string;
   readonly updatedAt: Date;
   readonly deletedAt: Date;
+  readonly _count: { likes: number; comments: number };
 }

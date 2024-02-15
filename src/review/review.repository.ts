@@ -30,7 +30,7 @@ export class ReviewRepository {
       place: true,
       files: true,
       tags: true,
-      likes: true,
+      _count: { select: { likes: true, comments: true } },
       user: { include: { followers: { where: { userId } } } },
     };
   }
@@ -106,6 +106,19 @@ export class ReviewRepository {
     return await this.prismaService.review.findFirst({
       where: { id: reviewId },
       include: this.include(user.id),
+    });
+  }
+
+  async getComments(id: string) {
+    return await this.prismaService.reviewComment.findMany({
+      where: { reviewId: id },
+      include: { user: true },
+    });
+  }
+
+  async writeComment(user: User, id: string, content: string) {
+    await this.prismaService.reviewComment.create({
+      data: { userId: user.id, reviewId: id, content },
     });
   }
 }
