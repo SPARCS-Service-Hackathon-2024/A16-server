@@ -11,6 +11,10 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -53,6 +57,8 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'follow user' })
+  @ApiCreatedResponse({ type: UserResponseDto })
+  @ApiConflictResponse({ description: 'already following' })
   @Post(':id/follow')
   @ApiParam({ format: 'uuid', name: 'id' })
   followUser(@GetUser() user: User, @Param() { id }: GetUserInfoDto) {
@@ -60,6 +66,8 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'unfollow user' })
+  @ApiOkResponse({ type: UserResponseDto })
+  @ApiNotFoundResponse({ description: 'not following' })
   @Delete(':id/follow')
   @ApiParam({ format: 'uuid', name: 'id' })
   unfollowUser(@GetUser() user: User, @Param() { id }: GetUserInfoDto) {
