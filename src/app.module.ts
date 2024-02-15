@@ -9,6 +9,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { NotificationModule } from './notification/notification.module';
 import { ReviewModule } from './review/review.module';
 import { FileModule } from './file/file.module';
+import { PlaceModule } from './place/place.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { FileModule } from './file/file.module';
     NotificationModule,
     ReviewModule,
     FileModule,
+    PlaceModule,
+    ThrottlerModule.forRoot([{ ttl: 60 * 10e3, limit: 10 }]),
   ],
   controllers: [AppController],
   providers: [AppService, ApiConfigService],
