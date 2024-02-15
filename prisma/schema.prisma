@@ -149,6 +149,10 @@ model ReviewComment {
   reviewId  String   @db.Uuid
 }
 
+enum FileType {
+  VIDEO
+}
+
 model File {
   id           String      @id @default(uuid()) @db.Uuid
   originalName String
@@ -158,4 +162,5 @@ model File {
   thumbnailId  String?     @unique @db.Uuid
   thumbnail    File?       @relation("Thumbnail", fields: [thumbnailId], references: [id])
   original     File?       @relation("Thumbnail")
+  type         FileType
 }
