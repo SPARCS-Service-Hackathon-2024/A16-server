@@ -46,6 +46,15 @@ export class ReviewService {
     });
   }
 
+  async getLikedReviews(user: User, dto: GetUserReviewsDto) {
+    const list = await this.reviewRepository.getLikedReviews(user, dto);
+    const count = await this.reviewRepository.getLikedReviewsCount(user);
+    return plainToInstance(SearchResultDto, {
+      list: list.map((item) => ({ ...item, liked: true })),
+      count,
+    });
+  }
+
   async getReview(user: User, id: string) {
     const review = await this.reviewRepository.getReview(user, id);
     if (!review) throw new NotFoundException('review not found');

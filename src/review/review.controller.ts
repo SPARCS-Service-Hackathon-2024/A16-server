@@ -56,6 +56,13 @@ export class ReviewController {
     });
   }
 
+  @ApiOperation({ summary: 'get liked reviews' })
+  @ApiOkResponse({ type: SearchResultDto })
+  @Get('likes')
+  async likes(@GetUser() user: User, @Query() query: GetUserReviewsDto) {
+    return this.reviewService.getLikedReviews(user, query);
+  }
+
   @ApiOperation({ summary: 'create review' })
   @Post()
   async create(@Body() body: CreateReviewDto) {

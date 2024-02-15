@@ -3,6 +3,7 @@ import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Region } from './enums/review-region.enum';
 import { With } from './enums/review-with.enum';
+import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
 
 @Injectable()
 export class ReviewRepository {
@@ -134,5 +135,19 @@ export class ReviewRepository {
 
   async deleteComment(commentId: string) {
     await this.prismaService.reviewComment.delete({ where: { id: commentId } });
+  }
+
+  async getLikedReviewsCount(user: User) {
+    return await this.prismaService.reviewLike.count({
+      where: { userId: user.id },
+    });
+  }
+  async getLikedReviews(user: User, dto: GetUserReviewsDto) {
+    return await this.prismaService.review.findMany({
+      where: { likes: { some: { userId: user.id } } },
+      skip: dto.skip,
+      take: dto.take,
+      include: this.include(user.id),
+    });
   }
 }
