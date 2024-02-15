@@ -92,6 +92,7 @@ model ReviewTag {
 model Place {
   id      String   @id @default(uuid()) @db.Uuid
   address String
+  region  String
   name    String
   lat     Float
   lng     Float
