@@ -13,6 +13,7 @@ import { ReviewService } from './review.service';
 import { SearchResultDto } from './dto/search-result.dto';
 import { GetUser } from 'src/user/get-user.decoration';
 import { User } from '@prisma/client';
+import { Region } from './enums/review-region.enum';
 
 @Controller('reviews')
 @ApiTags('review')
@@ -28,9 +29,18 @@ export class ReviewController {
   }
 
   @ApiOperation({ summary: 'get recommended reviews' })
+  @ApiOkResponse({ type: SearchResultDto })
   @Get('recommended')
-  async recommended(@Query() query: ReviewRecommendedDto) {
-    console.log(query);
+  async recommended(
+    @GetUser() user: User,
+    @Query() query: ReviewRecommendedDto,
+  ) {
+    return this.reviewService.searchReview(user, {
+      ...query,
+      regions: Object.values(Region),
+      withs: [],
+      tags: [],
+    });
   }
 
   @ApiOperation({ summary: 'create review' })
