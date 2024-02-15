@@ -34,7 +34,7 @@ export class ReviewRepository {
       skip,
       take,
       where: this.searchQuery(query),
-      include: { place: true, files: true },
+      include: { place: true, files: true, tags: true },
     });
   }
 
