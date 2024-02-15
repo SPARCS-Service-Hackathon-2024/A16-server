@@ -1,8 +1,12 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 import { firstValueFrom } from 'rxjs';
 import { ApiConfigService } from 'src/api-config/api-config.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { objectToCamel } from 'ts-case-convert';
+import { SearchResultDto } from './dto/search-result.dto';
+import { Region } from 'src/review/enums/review-region.enum';
 
 @Injectable()
 export class PlaceRepository {
@@ -26,7 +30,31 @@ export class PlaceRepository {
       },
     );
     const { data } = await firstValueFrom($);
-    return data;
+    const result = plainToInstance(SearchResultDto, objectToCamel(data));
+    await this.prismaService.$transaction(
+      result.documents.map(({ id, placeName, ...d }) =>
+        this.prismaService.place.upsert({
+          where: { oid: id },
+          update: {
+            ...d,
+            name: placeName,
+            lat: Number.parseFloat(d.x),
+            lng: Number.parseFloat(d.y),
+          },
+          create: {
+            ...d,
+            region: Object.values(Region).filter((r) =>
+              d.addressName.includes(r),
+            )[0],
+            oid: id,
+            name: placeName,
+            lat: Number.parseFloat(d.x),
+            lng: Number.parseFloat(d.y),
+          },
+        }),
+      ),
+    );
+    return result;
   }
 
   // async getOrCreatePlaceByAddress(address: string) {
