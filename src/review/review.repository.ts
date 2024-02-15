@@ -109,6 +109,10 @@ export class ReviewRepository {
     });
   }
 
+  deleteReview(id: string) {
+    return this.prismaService.review.delete({ where: { id } });
+  }
+
   async getComments(id: string) {
     return await this.prismaService.reviewComment.findMany({
       where: { reviewId: id },

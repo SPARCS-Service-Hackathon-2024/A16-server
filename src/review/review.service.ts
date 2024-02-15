@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -53,6 +54,14 @@ export class ReviewService {
       ...review,
       liked: liked.map((r) => r.id).includes(review.id),
     });
+  }
+
+  async deleteReview(user: User, id: string) {
+    const review = await this.reviewRepository.getReview(user, id);
+    if (!review) throw new NotFoundException('review not found');
+    if (review.userId !== user.id)
+      throw new ForbiddenException('not your review');
+    await this.reviewRepository.deleteReview(id);
   }
 
   async like(user: User, reviewId: string) {

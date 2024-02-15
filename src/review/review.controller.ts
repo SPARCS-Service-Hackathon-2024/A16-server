@@ -26,6 +26,7 @@ import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
 import { ReviewOneDto } from './dto/review-one.dto';
 import { WriteCommentDto } from './dto/write-comment.dto';
 import { ReviewCommentOneDto } from './dto/review-comment-one.dto';
+import { ReviewSummaryDto } from './dto/review-summary.dto';
 
 @Controller('reviews')
 @ApiTags('review')
@@ -62,9 +63,16 @@ export class ReviewController {
   }
 
   @ApiOperation({ summary: 'get review' })
+  @ApiOkResponse({ type: ReviewSummaryDto })
   @Get(':id')
   async get(@GetUser() user: User, @Param() { id }: ReviewOneDto) {
     return this.reviewService.getReview(user, id);
+  }
+
+  @ApiOperation({ summary: 'delete review' })
+  @Delete(':id')
+  async delete(@GetUser() user: User, @Param() { id }: ReviewOneDto) {
+    this.reviewService.deleteReview(user, id);
   }
 
   @ApiOperation({ summary: 'like review' })
