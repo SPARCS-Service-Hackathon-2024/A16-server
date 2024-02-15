@@ -41,7 +41,15 @@ class FileDto
   @ApiProperty()
   @Expose()
   get url() {
-    return `${process.env.MINIO_ENDPOINT}/files/${this.id}`;
+    return `https://wayu-s3.hackathon.sparcs.net/videos/${this.fileId}`;
+  }
+
+  @ApiProperty()
+  @Expose()
+  get thumbnail() {
+    return this.file.thumbnail
+      ? `https://wayu-s3.hackathon.sparcs.net/thumbnails/${this.file.thumbnail.id}`
+      : null;
   }
 
   readonly reviewId: string;
