@@ -16,12 +16,26 @@ export class ReviewService {
   ): Promise<SearchResultDto> {
     const list = await this.reviewRepository.search(user, dto);
     const count = await this.reviewRepository.searchCount(dto);
-    return plainToInstance(SearchResultDto, { list, count });
+    const liked = await this.reviewRepository.getLiked(user, list);
+    return plainToInstance(SearchResultDto, {
+      list: list.map((item) => ({
+        ...item,
+        liked: liked.map((r) => r.id).includes(item.id),
+      })),
+      count,
+    });
   }
 
   async getUserReviews(user: User, userId: string, dto: GetUserReviewsDto) {
     const list = await this.reviewRepository.getUserReviews(user, userId, dto);
     const count = await this.reviewRepository.getUserReviewsCount(userId);
-    return plainToInstance(SearchResultDto, { list, count });
+    const liked = await this.reviewRepository.getLiked(user, list);
+    return plainToInstance(SearchResultDto, {
+      list: list.map((item) => ({
+        ...item,
+        liked: liked.map((r) => r.id).includes(item.id),
+      })),
+      count,
+    });
   }
 }

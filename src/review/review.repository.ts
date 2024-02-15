@@ -25,6 +25,16 @@ export class ReviewRepository {
     };
   }
 
+  private include(userId: string): Prisma.ReviewInclude {
+    return {
+      place: true,
+      files: true,
+      tags: true,
+      likes: true,
+      user: { include: { followers: { where: { userId } } } },
+    };
+  }
+
   async search(
     user: User,
     {
@@ -37,13 +47,7 @@ export class ReviewRepository {
       skip,
       take,
       where: this.searchQuery(query),
-      include: {
-        place: true,
-        files: true,
-        tags: true,
-        user: { include: { followers: { where: { userId: user.id } } } },
-        likes: true,
-      },
+      include: this.include(user.id),
     });
   }
 
@@ -62,17 +66,20 @@ export class ReviewRepository {
       skip,
       take,
       where: { userId },
-      include: {
-        place: true,
-        files: true,
-        tags: true,
-        user: { include: { followers: { where: { userId: user.id } } } },
-        likes: true,
-      },
+      include: this.include(user.id),
     });
   }
 
   async getUserReviewsCount(userId: string) {
     return await this.prismaService.review.count({ where: { userId } });
+  }
+
+  async getLiked(user: User, list: Awaited<ReturnType<typeof this.search>>) {
+    return await this.prismaService.review.findMany({
+      where: {
+        id: { in: list.map((review) => review.id) },
+        likes: { some: { userId: user.id } },
+      },
+    });
   }
 }

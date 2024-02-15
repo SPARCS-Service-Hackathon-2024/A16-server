@@ -4,6 +4,7 @@ import {
   Place,
   Review,
   ReviewFile,
+  ReviewLike,
   ReviewTag,
   User,
 } from '@prisma/client';
@@ -112,7 +113,13 @@ export class ReviewSummaryDto implements Review {
   @ApiProperty({ type: Number })
   @Transform(({ value }) => value.length, { toPlainOnly: true })
   @Expose()
-  readonly likes: any;
+  readonly likes: ReviewLike[];
+
+  @ApiProperty({ type: Boolean })
+  @Expose()
+  get liked() {
+    return this.likes.length !== 0;
+  }
 
   readonly placeId: string;
   readonly updatedAt: Date;
