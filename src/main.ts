@@ -12,7 +12,12 @@ async function bootstrap() {
     }),
   );
   app.enableCors();
-  const config = new DocumentBuilder().setTitle('API').addBearerAuth().build();
+  const config = new DocumentBuilder()
+    .setTitle('Wayu API')
+    .setDescription('API Documentation for Wayu')
+    .setVersion('1.0.0')
+    .addBearerAuth()
+    .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document, {
     swaggerOptions: { persistAuthorization: true },
