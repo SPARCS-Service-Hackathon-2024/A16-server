@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   $Enums,
+  File,
   Place,
   Prisma,
   ReviewFile,
@@ -27,16 +28,25 @@ class PlaceDto implements Place {
   readonly lng: number;
 }
 
-class FileDto implements ReviewFile {
+class FileDto
+  implements
+    Prisma.ReviewFileGetPayload<{
+      include: { file: { include: { thumbnail: true } } };
+    }>
+{
   @ApiProperty()
   @Expose()
   readonly id: string;
 
   @ApiProperty()
   @Expose()
-  readonly url: string;
+  get url() {
+    return `${process.env.MINIO_ENDPOINT}/files/${this.id}`;
+  }
 
   readonly reviewId: string;
+  readonly fileId: string;
+  readonly file: { thumbnail: File | null } & File;
 }
 
 class UserDto implements User {
