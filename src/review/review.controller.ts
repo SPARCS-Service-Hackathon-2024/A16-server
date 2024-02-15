@@ -78,13 +78,13 @@ export class ReviewController {
   @ApiOperation({ summary: 'like review' })
   @Post(':id/like')
   async like(@GetUser() user: User, @Param() { id }: ReviewOneDto) {
-    this.reviewService.like(user, id);
+    await this.reviewService.like(user, id);
   }
 
   @ApiOperation({ summary: 'dislike review' })
   @Delete(':id/like')
   async unlike(@GetUser() user: User, @Param() { id }: ReviewOneDto) {
-    this.reviewService.unlike(user, id);
+    await this.reviewService.unlike(user, id);
   }
 
   @ApiOperation({ summary: 'get review comments' })
