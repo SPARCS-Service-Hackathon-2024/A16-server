@@ -1,13 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  $Enums,
-  File,
-  Place,
-  Prisma,
-  ReviewFile,
-  ReviewTag,
-  User,
-} from '@prisma/client';
+import { $Enums, File, Place, Prisma, ReviewTag, User } from '@prisma/client';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 
 class PlaceDto implements Place {
@@ -19,13 +11,21 @@ class PlaceDto implements Place {
   @Expose()
   readonly name: string;
 
-  readonly region: string;
-
   @ApiProperty()
   @Expose()
   readonly address: string;
   readonly lat: number;
   readonly lng: number;
+
+  readonly region: string;
+  readonly oid: string;
+  readonly categoryName: string;
+  readonly categoryGroupName: string;
+  readonly categoryGroupCode: string;
+  readonly phone: string;
+  readonly addressName: string;
+  readonly roadAddressName: string;
+  readonly placeUrl: string;
 }
 
 class FileDto
