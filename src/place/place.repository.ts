@@ -16,6 +16,17 @@ export class PlaceRepository {
     private readonly configService: ApiConfigService,
   ) {}
 
+  async count() {
+    return await this.prismaService.place.count();
+  }
+
+  async list({ skip, take }: { skip: number; take: number }) {
+    return await this.prismaService.place.findMany({
+      skip,
+      take,
+    });
+  }
+
   async search(keyword: string) {
     const $ = this.httpService.get(
       'https://dapi.kakao.com/v2/local/search/keyword',

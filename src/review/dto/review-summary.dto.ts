@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { $Enums, File, Place, Prisma, ReviewTag, User } from '@prisma/client';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 
-class PlaceDto implements Place {
+class PlaceSummaryDto implements Place {
   @ApiProperty({ format: 'uuid' })
   @Expose()
   readonly id: string;
@@ -107,10 +107,10 @@ export class ReviewSummaryDto
   @Expose()
   readonly content: string;
 
-  @ApiProperty({ type: PlaceDto })
-  @Type(() => PlaceDto)
+  @ApiProperty({ type: PlaceSummaryDto })
+  @Type(() => PlaceSummaryDto)
   @Expose()
-  readonly place: PlaceDto;
+  readonly place: PlaceSummaryDto;
 
   @ApiProperty({ type: [FileDto] })
   @Type(() => FileDto)

@@ -82,12 +82,12 @@ export class DocumentDto {
 }
 
 export class SearchResultDto {
-  @ApiProperty()
+  @ApiProperty({ type: MetaDto })
   @Expose()
   @Type(() => MetaDto)
   readonly meta: MetaDto;
 
-  @ApiProperty()
+  @ApiProperty({ type: [DocumentDto] })
   @Expose()
   @Type(() => DocumentDto)
   readonly documents: DocumentDto[];
