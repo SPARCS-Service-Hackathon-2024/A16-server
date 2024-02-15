@@ -154,7 +154,7 @@ export class ReviewRepository {
     });
   }
 
-  writeReview({
+  async writeReview({
     user,
     placeId,
     videoId,
@@ -171,10 +171,14 @@ export class ReviewRepository {
     with: With[];
     tags: string[];
   }) {
+    const place = await this.prismaService.place.findFirst({
+      where: { oid: placeId },
+    });
+    if (!place) throw new BadRequestException();
     return this.prismaService.review.create({
       data: {
         userId: user.id,
-        placeId,
+        placeId: place.id,
         files: { connect: { fileId: videoId } },
         content,
         stars,
