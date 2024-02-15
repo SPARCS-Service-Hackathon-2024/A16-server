@@ -13,16 +13,19 @@ export class ReviewRepository {
     regions,
     withs,
     tags,
+    query,
   }: {
     regions: Region[];
     withs: With[];
     tags: string[];
+    query?: string;
   }): Prisma.ReviewWhereInput {
     if (regions.length === 0) throw new BadRequestException();
     return {
       place: { region: { in: regions } },
       ...(withs.length === 0 ? {} : { with: { some: { in: withs } } }),
       ...(tags.length === 0 ? {} : { tags: { some: { name: { in: tags } } } }),
+      ...(query ? { place: { name: { contains: query } } } : {}),
     };
   }
 

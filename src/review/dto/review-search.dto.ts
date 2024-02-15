@@ -49,4 +49,7 @@ export class ReviewSearchDto {
   @Type(() => Number)
   @Max(100)
   readonly take: number = 10;
+
+  @ApiProperty({ required: false })
+  readonly query?: string;
 }
