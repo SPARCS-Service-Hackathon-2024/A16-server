@@ -1,15 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsArray } from 'class-validator';
+import { IsArray, Max, Min } from 'class-validator';
 import { With } from '../enums/review-with.enum';
-
-enum Region {
-  서구 = '서구',
-  중구 = '중구',
-  유성구 = '유성구',
-  대덕구 = '대덕구',
-  동구 = '동구',
-}
+import { Region } from '../enums/review-region.enum';
 
 export class ReviewSearchDto {
   @ApiProperty({
@@ -22,7 +15,7 @@ export class ReviewSearchDto {
   @Type(() => String)
   @Transform(({ value }) => [...new Set(value.split(','))])
   @IsArray()
-  readonly region: Region[];
+  readonly regions: Region[];
 
   @ApiProperty({
     required: false,
@@ -35,7 +28,7 @@ export class ReviewSearchDto {
   @Type(() => String)
   @Transform(({ value }) => [...new Set(value.split(','))].filter(Boolean))
   @IsArray()
-  readonly with: With[] = [];
+  readonly withs: With[] = [];
 
   @ApiProperty({
     required: false,
@@ -46,4 +39,12 @@ export class ReviewSearchDto {
   @Transform(({ value }) => [...new Set(value.split(','))])
   @IsArray()
   readonly tags: string[] = [];
+
+  @ApiProperty({ required: false })
+  @Min(0)
+  readonly skip: number = 0;
+
+  @ApiProperty({ required: false })
+  @Max(100)
+  readonly take: number = 10;
 }

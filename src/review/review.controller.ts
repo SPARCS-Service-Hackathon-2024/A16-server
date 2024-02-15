@@ -1,18 +1,28 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { ReviewRecommendedDto } from './dto/review-recommended.dto';
 import { ReviewSearchDto } from './dto/review-search.dto';
 import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
+import { ReviewService } from './review.service';
+import { SearchResultDto } from './dto/search-result.dto';
 
 @Controller('reviews')
 @ApiTags('review')
 @ApiBearerAuth()
 export class ReviewController {
+  constructor(private readonly reviewService: ReviewService) {}
+
   @ApiOperation({ summary: 'search reviews' })
+  @ApiOkResponse({ type: SearchResultDto })
   @Get('')
   async search(@Query() query: ReviewSearchDto) {
-    console.log(query);
+    return this.reviewService.searchReview(query);
   }
 
   @ApiOperation({ summary: 'get recommended reviews' })
