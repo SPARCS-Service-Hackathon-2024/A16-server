@@ -25,6 +25,7 @@ import { Region } from './enums/review-region.enum';
 import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
 import { ReviewOneDto } from './dto/review-one.dto';
 import { WriteCommentDto } from './dto/write-comment.dto';
+import { ReviewCommentOneDto } from './dto/review-comment-one.dto';
 
 @Controller('reviews')
 @ApiTags('review')
@@ -74,7 +75,7 @@ export class ReviewController {
 
   @ApiOperation({ summary: 'get review comments' })
   @Get(':id/comments')
-  async get(@Param() { id }: ReviewOneDto) {
+  async getComments(@Param() { id }: ReviewOneDto) {
     return this.reviewService.getComments(id);
   }
 
@@ -86,6 +87,15 @@ export class ReviewController {
     @Body() body: WriteCommentDto,
   ) {
     return this.reviewService.writeComment(user, id, body.content);
+  }
+
+  @ApiOperation({ summary: 'delete review comment' })
+  @Delete(':id/comments/:commentId')
+  async deleteComment(
+    @GetUser() user: User,
+    @Param() { commentId }: ReviewCommentOneDto,
+  ) {
+    return this.reviewService.deleteComment(user, commentId);
   }
 }
 

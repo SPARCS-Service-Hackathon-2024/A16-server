@@ -121,4 +121,14 @@ export class ReviewRepository {
       data: { userId: user.id, reviewId: id, content },
     });
   }
+
+  async getComment(commentId: string) {
+    return await this.prismaService.reviewComment.findFirst({
+      where: { id: commentId },
+    });
+  }
+
+  async deleteComment(commentId: string) {
+    await this.prismaService.reviewComment.delete({ where: { id: commentId } });
+  }
 }

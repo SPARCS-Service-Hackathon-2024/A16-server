@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ReviewRepository } from './review.repository';
 import { ReviewSearchDto } from './dto/review-search.dto';
 import { SearchResultDto } from './dto/search-result.dto';
@@ -61,5 +65,13 @@ export class ReviewService {
 
   async writeComment(user: User, reviewId: string, content: string) {
     await this.reviewRepository.writeComment(user, reviewId, content);
+  }
+
+  async deleteComment(user: User, commentId: string) {
+    const comment = await this.reviewRepository.getComment(commentId);
+    if (!comment) throw new NotFoundException('comment not found');
+    if (comment.userId !== user.id)
+      throw new ConflictException('not your comment');
+    await this.reviewRepository.deleteComment(commentId);
   }
 }
