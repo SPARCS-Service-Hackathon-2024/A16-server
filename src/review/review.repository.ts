@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Region } from './enums/review-region.enum';
 import { With } from './enums/review-with.enum';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 
 @Injectable()
 export class ReviewRepository {
@@ -25,16 +25,24 @@ export class ReviewRepository {
     };
   }
 
-  async search({
-    skip = 0,
-    take = 10,
-    ...query
-  }: { skip: number; take: number } & Parameters<typeof this.searchQuery>[0]) {
+  async search(
+    user: User,
+    {
+      skip = 0,
+      take = 10,
+      ...query
+    }: { skip: number; take: number } & Parameters<typeof this.searchQuery>[0],
+  ) {
     return await this.prismaService.review.findMany({
       skip,
       take,
       where: this.searchQuery(query),
-      include: { place: true, files: true, tags: true },
+      include: {
+        place: true,
+        files: true,
+        tags: true,
+        user: { include: { followers: { where: { userId: user.id } } } },
+      },
     });
   }
 

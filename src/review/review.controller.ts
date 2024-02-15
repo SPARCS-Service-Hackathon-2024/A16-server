@@ -11,6 +11,8 @@ import { ReviewSearchDto } from './dto/review-search.dto';
 import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
 import { ReviewService } from './review.service';
 import { SearchResultDto } from './dto/search-result.dto';
+import { GetUser } from 'src/user/get-user.decoration';
+import { User } from '@prisma/client';
 
 @Controller('reviews')
 @ApiTags('review')
@@ -21,8 +23,8 @@ export class ReviewController {
   @ApiOperation({ summary: 'search reviews' })
   @ApiOkResponse({ type: SearchResultDto })
   @Get('')
-  async search(@Query() query: ReviewSearchDto) {
-    return this.reviewService.searchReview(query);
+  async search(@GetUser() user: User, @Query() query: ReviewSearchDto) {
+    return this.reviewService.searchReview(user, query);
   }
 
   @ApiOperation({ summary: 'get recommended reviews' })

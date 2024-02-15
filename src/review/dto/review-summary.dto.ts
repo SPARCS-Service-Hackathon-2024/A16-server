@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Place, Review, ReviewFile, ReviewTag } from '@prisma/client';
+import {
+  $Enums,
+  Place,
+  Review,
+  ReviewFile,
+  ReviewTag,
+  User,
+} from '@prisma/client';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 
 class PlaceDto implements Place {
@@ -12,6 +19,9 @@ class PlaceDto implements Place {
   readonly name: string;
 
   readonly region: string;
+
+  @ApiProperty()
+  @Expose()
   readonly address: string;
   readonly lat: number;
   readonly lng: number;
@@ -27,6 +37,30 @@ class FileDto implements ReviewFile {
   readonly url: string;
 
   readonly reviewId: string;
+}
+
+class UserDto implements User {
+  @ApiProperty()
+  @Expose()
+  id: string;
+
+  @ApiProperty()
+  @Expose()
+  nickname: string;
+
+  @ApiProperty()
+  @Expose()
+  get isFollowing() {
+    return this.followers.length !== 0;
+  }
+
+  provider: $Enums.AuthProvider;
+  email: string;
+  password: string;
+  bio: string;
+  createdAt: Date;
+  updatedAt: Date;
+  followers: User[];
 }
 
 export class ReviewSummaryDto implements Review {
@@ -69,6 +103,11 @@ export class ReviewSummaryDto implements Review {
   })
   @Expose()
   readonly tags: string[];
+
+  @ApiProperty({ type: UserDto })
+  @Type(() => UserDto)
+  @Expose()
+  readonly user: UserDto;
 
   readonly placeId: string;
   readonly updatedAt: Date;
