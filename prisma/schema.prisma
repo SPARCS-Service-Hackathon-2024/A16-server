@@ -29,6 +29,7 @@ model User {
   followings    Following[]    @relation("User")
   followers     Following[]    @relation("Following")
   tags          UserTag[]
+  likes         ReviewLike[]
 }
 
 enum NotificationType {
@@ -64,6 +65,7 @@ model Review {
   tags    ReviewTag[]
   place   Place        @relation(fields: [placeId], references: [id])
   placeId String       @db.Uuid
+  likes   ReviewLike[]
 }
 
 model ReviewFile {
@@ -115,4 +117,13 @@ model UserTag {
   userId String @db.Uuid
 
   @@id([name, userId])
+}
+
+model ReviewLike {
+  review   Review @relation(fields: [reviewId], references: [id])
+  reviewId String @db.Uuid
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String @db.Uuid
+
+  @@id([reviewId, userId])
 }
