@@ -42,6 +42,7 @@ export class ReviewRepository {
         files: true,
         tags: true,
         user: { include: { followers: { where: { userId: user.id } } } },
+        likes: true,
       },
     });
   }

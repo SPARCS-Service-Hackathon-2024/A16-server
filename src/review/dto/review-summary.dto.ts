@@ -109,6 +109,11 @@ export class ReviewSummaryDto implements Review {
   @Expose()
   readonly user: UserDto;
 
+  @ApiProperty({ type: Number })
+  @Transform(({ value }) => value.length, { toPlainOnly: true })
+  @Expose()
+  readonly likes: any;
+
   readonly placeId: string;
   readonly updatedAt: Date;
   readonly deletedAt: Date;
