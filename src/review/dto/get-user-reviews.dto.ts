@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID } from 'class-validator';
+import { Max, Min } from 'class-validator';
 
 export class GetUserReviewsDto {
-  @ApiProperty({ format: 'uuid' })
-  @IsString()
-  @IsUUID()
-  id: string;
+  @ApiProperty({ required: false })
+  @Min(0)
+  readonly skip: number = 0;
+
+  @ApiProperty({ required: false })
+  @Max(100)
+  readonly take: number = 10;
 }

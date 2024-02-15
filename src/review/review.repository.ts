@@ -52,4 +52,27 @@ export class ReviewRepository {
       where: this.searchQuery(query),
     });
   }
+
+  async getUserReviews(
+    user: User,
+    userId: string,
+    { skip = 0, take = 10 }: { skip: number; take: number },
+  ) {
+    return await this.prismaService.review.findMany({
+      skip,
+      take,
+      where: { userId },
+      include: {
+        place: true,
+        files: true,
+        tags: true,
+        user: { include: { followers: { where: { userId: user.id } } } },
+        likes: true,
+      },
+    });
+  }
+
+  async getUserReviewsCount(userId: string) {
+    return await this.prismaService.review.count({ where: { userId } });
+  }
 }

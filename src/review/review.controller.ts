@@ -8,12 +8,13 @@ import {
 import { CreateReviewDto } from './dto/create-review.dto';
 import { ReviewRecommendedDto } from './dto/review-recommended.dto';
 import { ReviewSearchDto } from './dto/review-search.dto';
-import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
+import { GetUserReviewsParamDto } from './dto/get-user-reviews-param.dto';
 import { ReviewService } from './review.service';
 import { SearchResultDto } from './dto/search-result.dto';
 import { GetUser } from 'src/user/get-user.decoration';
 import { User } from '@prisma/client';
 import { Region } from './enums/review-region.enum';
+import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
 
 @Controller('reviews')
 @ApiTags('review')
@@ -54,9 +55,16 @@ export class ReviewController {
 @ApiTags('review')
 @ApiBearerAuth()
 export class ReviewUserController {
+  constructor(private readonly reviewService: ReviewService) {}
+
   @ApiOperation({ summary: 'get user reviews' })
+  @ApiOkResponse({ type: SearchResultDto })
   @Get(':id/reviews')
-  async getUserReviews(@Param() { id }: GetUserReviewsDto) {
-    console.log(id);
+  async getUserReviews(
+    @GetUser() user: User,
+    @Param() { id }: GetUserReviewsParamDto,
+    @Query() query: GetUserReviewsDto,
+  ) {
+    return this.reviewService.getUserReviews(user, id, query);
   }
 }
