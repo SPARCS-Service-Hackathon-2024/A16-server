@@ -10,6 +10,7 @@ import { plainToInstance } from 'class-transformer';
 import { User } from '@prisma/client';
 import { GetUserReviewsDto } from './dto/get-user-reviews.dto';
 import { CommentDto } from './dto/comment.dto';
+import { ReviewSummaryDto } from './dto/review-summary.dto';
 
 @Injectable()
 export class ReviewService {
@@ -41,6 +42,16 @@ export class ReviewService {
         liked: liked.map((r) => r.id).includes(item.id),
       })),
       count,
+    });
+  }
+
+  async getReview(user: User, id: string) {
+    const review = await this.reviewRepository.getReview(user, id);
+    if (!review) throw new NotFoundException('review not found');
+    const liked = await this.reviewRepository.getLiked(user, [review]);
+    return plainToInstance(ReviewSummaryDto, {
+      ...review,
+      liked: liked.map((r) => r.id).includes(review.id),
     });
   }
 

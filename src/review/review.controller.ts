@@ -61,6 +61,12 @@ export class ReviewController {
     console.log(body);
   }
 
+  @ApiOperation({ summary: 'get review' })
+  @Get(':id')
+  async get(@GetUser() user: User, @Param() { id }: ReviewOneDto) {
+    return this.reviewService.getReview(user, id);
+  }
+
   @ApiOperation({ summary: 'like review' })
   @Post(':id/like')
   async like(@GetUser() user: User, @Param() { id }: ReviewOneDto) {
