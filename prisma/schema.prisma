@@ -16,20 +16,21 @@ enum AuthProvider {
 }
 
 model User {
-  id            String         @id @default(uuid()) @db.Uuid
-  nickname      String         @unique
+  id            String          @id @default(uuid()) @db.Uuid
+  nickname      String          @unique
   provider      AuthProvider
-  email         String         @unique
+  email         String          @unique
   password      String
-  bio           String         @default("")
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  bio           String          @default("")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   notifications Notification[]
   reviews       Review[]
-  followings    Following[]    @relation("User")
-  followers     Following[]    @relation("Following")
+  followings    Following[]     @relation("User")
+  followers     Following[]     @relation("Following")
   tags          UserTag[]
   likes         ReviewLike[]
+  comments      ReviewComment[]
 }
 
 enum NotificationType {
@@ -61,11 +62,12 @@ model Review {
   stars     Int
   content   String       @db.VarChar(1000)
 
-  withs   ReviewWith[]
-  tags    ReviewTag[]
-  place   Place        @relation(fields: [placeId], references: [id])
-  placeId String       @db.Uuid
-  likes   ReviewLike[]
+  withs    ReviewWith[]
+  tags     ReviewTag[]
+  place    Place           @relation(fields: [placeId], references: [id])
+  placeId  String          @db.Uuid
+  likes    ReviewLike[]
+  comments ReviewComment[]
 }
 
 model ReviewFile {
@@ -126,4 +128,15 @@ model ReviewLike {
   userId   String @db.Uuid
 
   @@id([reviewId, userId])
+}
+
+model ReviewComment {
+  id        String   @id @default(uuid()) @db.Uuid
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.Uuid
+  review    Review   @relation(fields: [reviewId], references: [id])
+  reviewId  String   @db.Uuid
 }
