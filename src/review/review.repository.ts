@@ -32,7 +32,7 @@ export class ReviewRepository {
   private include(userId: string): Prisma.ReviewInclude {
     return {
       place: true,
-      files: true,
+      files: { include: { file: true } },
       tags: true,
       _count: { select: { likes: true, comments: true } },
       user: { include: { followers: { where: { userId } } } },
